@@ -8,7 +8,7 @@ class StartMenu:
     def __init__(self, screen):
         self.scores = []
         self.screen = screen
-        open('highscores.txt', 'a').close() # Создает файл, если его нет
+        open('highscores.txt', 'a').close()  # Создает файл, если его нет
 
 # Возвращает номер кнопки на которую наведен курсор: 0-new game; 1-highscores menu; 2-exit или None
     def cur_in_button(self, mouse_x, mouse_my):
