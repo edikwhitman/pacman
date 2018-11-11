@@ -1,5 +1,7 @@
-import pygame, sys
-from config.py import BLACK, BLUE, WHITE
+import pygame
+import sys
+
+from config import BLACK
 
 
 class StartMenu:
@@ -8,19 +10,19 @@ class StartMenu:
         self.screen = screen
         open('highscores.txt', 'a').close() # Создает файл, если его нет
 
-#### Возвращает номер кнопки на которую наведен курсор: 0-new game; 1-highscores menu; 2-exit или None
+# Возвращает номер кнопки на которую наведен курсор: 0-new game; 1-highscores menu; 2-exit или None
     def cur_in_button(self, mouse_x, mouse_my):
         return None
 
-#### Отрисовка не статичных объектов (кнопки)
+# Отрисовка не статичных объектов (кнопки)
     def draw(self, surface):
         pass
 
-#### Стартовая отрисовка меню (отрисовка статичных объектов)
+# Стартовая отрисовка меню (отрисовка статичных объектов)
     def start_draw(self, surface):
         self.screen.fill(BLACK)
 
-#### Обработка ивентов
+# Обработка ивентов
     def check_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             num = self.cur_in_button(pygame.mouse.get_pos())
@@ -32,14 +34,14 @@ class StartMenu:
                 pygame.quit()
                 sys.exit()
 
-#### Выгрузка рекордов из файла в память
+# Выгрузка рекордов из файла в память
     def load_scores(self):
         with open('highscores.txt', 'r') as f:
             for line in f:
                 self.scores.append(int(line))
         # print('loaded ', self.scores)
 
-#### Добавление нового рекорда (только в память)
+# Добавление нового рекорда (только в память)
     def add_new_score(self, num):
         self.scores.append(num)
         # print('add/ added ', self.scores)
@@ -47,7 +49,7 @@ class StartMenu:
         self.scores = self.scores[:-1]
         # print('add/ sorted ', self.scores)
 
-#### Запись всех рекодов из памяти в файл
+# Запись всех рекодов из памяти в файл
     def write_scores(self):
         with open('highscores.txt', 'w') as f:
             for i in range(10):
