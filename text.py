@@ -1,11 +1,11 @@
 import pygame
 from random import randint
-from config import WIDTH, HEIGHT, WHITE
+from config import WIDTH, HEIGHT, BLACK
 
 
 class Text:
     def __init__(self, x, y, text='Hello, Pygame!',
-                 font="Comic Sans MS", size=35, color=WHITE, bold=True, italic=False):
+                 font="Comic Sans MS", size=35, color=BLACK, bold=True, italic=False):
         self.x = x
         self.y = y
         self.text = text
