@@ -2,7 +2,7 @@ import pygame
 
 
 class Character():  # Статичный персонаж
-    def __init__(self, x, y, img_src, width=None, height=None):  # x, y - координаты, img_src - спрайт
+    def __init__(self, x, y, img_src, width, height):  # x, y - координаты, img_src - спрайт
         self.x = x
         self.y = y
         self.object = pygame.image.load(img_src)
@@ -53,18 +53,18 @@ class Character():  # Статичный персонаж
 
 
 class AnimatedCharacter(Character):  # Анимированный персонаж
-    def __init__(self, x, y, img_src, sprite_width, sprite_height, columns, width=None, height=None, time=1,
-                 loop=True):  # img_src - изображение с набором спрайтов (без отступов, в одну строку), sprite_width и sprite_height - ширина и высота спрайтов соответственно, columns - количество спрайтов
+    def __init__(self, x, y, img_src, sprites_cnt, width, height, time=1,
+                 loop=True):  # img_src - изображение с набором спрайтов (без отступов, в один ряд), sprites_cnt - количество спрайтов, loop - зацикливание анимации, time - время анимации
         self.x = x
         self.y = y
         self.img_src = pygame.image.load(img_src)
-        self.sprite_width = sprite_width
-        self.sprite_height = sprite_height
-        self.columns = columns
+        self.sprite_width = self.img_src.get_rect().width // sprites_cnt
+        self.sprite_height = self.img_src.get_rect().height
+        self.sprites_cnt = sprites_cnt
         self.width = width
         self.height = height
         self.angle = 0
-        self.sprites = self.splitSprites(self.img_src, self.columns, self.sprite_width, self.sprite_height)
+        self.sprites = self.splitSprites(self.img_src)
         self.object = self.sprites[0]
         self.object_rect = self.sprites[0].get_rect()
         self.time = time
@@ -73,11 +73,15 @@ class AnimatedCharacter(Character):  # Анимированный персона
         self.frame = 0
         self.loop = loop
         self.end = False
+        print(self.sprite_width, self.sprite_height)
 
-    def splitSprites(self, img_src, columns, sprite_width, sprite_height):  # Разделение изображения img_src на спрайты
+    def splitSprites(self, img_src, sprites_cnt = None, first_sprite = 0, last_sprite = -1):  # Разделение изображения img_src на спрайты
+        if not sprites_cnt == None: self.sprites_cnt = sprites_cnt
+        if last_sprite == -1: last_sprite = self.sprites_cnt
+
         sprites = []
-        for c in range(columns):
-            sprites.append(img_src.subsurface((c * sprite_width, 0, sprite_width, sprite_height)))
+        for c in range(first_sprite, last_sprite):
+            sprites.append(img_src.subsurface((c * self.sprite_width, 0, self.sprite_width, self.sprite_height)))
         return sprites
 
     def update(self, dt):  # Обновление кадров анимации
@@ -93,28 +97,30 @@ class AnimatedCharacter(Character):  # Анимированный персона
                     self.end = True
 
     def getSprite(self):  # Вернуть спрайт
-        self.object = self.sprites[self.frame]
         return self.sprites[self.frame]
 
     def setTime(self, time):  # Задать время для анимации
         self.time = time
 
-    def setAnimation(self, img_src, sprite_width, sprite_height, columns, time,
-                     loop):  # Задать изображение со спрайтами
+    def setAnimation(self, img_src, sprites_cnt, time = 1, loop = True):  # Задать изображение со спрайтами
         self.img_src = pygame.image.load(img_src)
-        self.sprite_width = sprite_width
-        self.sprite_height = sprite_height
-        self.columns = columns
+        self.sprite_width = self.img_src.get_rect().width // sprites_cnt
+        self.sprite_height = self.img_src.get_rect().height
+        self.sprites_cnt = sprites_cnt
         self.time = time
         self.work_time = 0
         self.skip_frame = 0
         self.frame = 0
         self.loop = loop
-        self.sprites = self.splitSprites(self.img_src, columns, sprite_width, sprite_height)
+        self.sprites = self.splitSprites(self.img_src)
 
-    def draw(self, screen):  # Вывод на экран
-        if self.end == False:
+    def setSplitSpritesRange(self, first_sprite, last_sprite):  # Задать диапазон для разделения спрайтов
+        self.sprites_cnt = last_sprite - first_sprite - 1
+        self.sprites = self.splitSprites(self.img_src, self.sprites_cnt, first_sprite - 1, last_sprite)
+
+    def draw(self, screen, upd_time = 1):  # Вывод на экран
+        if not self.end:
             self.object = self.getSprite()
-            self.update(1)
+            self.update(upd_time)
             self.setRotation(self.angle)
             screen.blit(pygame.transform.scale(self.object, (self.width, self.height)), self.object_rect)
