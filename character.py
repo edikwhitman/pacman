@@ -10,6 +10,7 @@ class Character():  # Статичный персонаж
         self.width = width
         self.height = height
         self.angle = 0
+        self.setPosition(self.x, self.y)
 
     def setX(self, x):  # Задать координату X
         self.x = x
@@ -73,7 +74,7 @@ class AnimatedCharacter(Character):  # Анимированный персона
         self.frame = 0
         self.loop = loop
         self.end = False
-        print(self.sprite_width, self.sprite_height)
+        self.setPosition(self.x, self.y)
 
     def splitSprites(self, img_src, sprites_cnt = None, first_sprite = 0, last_sprite = -1):  # Разделение изображения img_src на спрайты
         if not sprites_cnt == None: self.sprites_cnt = sprites_cnt
