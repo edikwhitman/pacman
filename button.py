@@ -1,25 +1,26 @@
 import pygame
-from text import Text
 
 
 class Button:
-    def __init__(self, w, h, screen, x=0, y=0, color=(255, 255, 255), b_text='', text_color=(0, 0, 0), size=20):
+    def __init__(self, index, x, y, height=20, width=30, static_img='images/button.png', on_pressed_img='images/button.jpg'):
+        self.index = index
         self.x = x
         self.y = y
-        self.w = w
-        self.h = h
-        self.screen = screen
-        self.color = color
-        self.size = size
-        self.text = Text(int(self.x), int(self.y), b_text, 'Comic Sans MS', self.size, text_color, True, False)
-        pygame.font.init()
+        self.width = width
+        self.height = height
+        self.img_static = pygame.image.load(static_img)
+        self.img_on_pressed = pygame.image.load(on_pressed_img)
+        self.status = 0  # 0 - курсор вне кнопки, 1- курсор на кнопке
 
-    def draw(self):
-        pygame.draw.rect(self.screen, self.color, (self.x, self.y, self.w, self.h))
-        self.text.draw(self.screen)
+    def draw(self, screen):
+        if self.status == 0:
+            screen.blit(self.img_static, (self.x, self.y))
+        elif self.status == 1:
+            screen.blit(self.img_on_pressed, (self.x, self.y))
 
-    def is_clicked(self, x, y):
-        if (self.x <= x <= self.x + self.w) and (self.y <= y <= self.y + self.h):
-            return True
+    def logic(self, cur_xy):
+        cur_x, cur_y = cur_xy
+        if (self.x <= cur_x <= self.x + self.width) and (self.y <= cur_y <= self.y + self.height):
+            self.status = 1
         else:
-            return False
+            self.status = 0
