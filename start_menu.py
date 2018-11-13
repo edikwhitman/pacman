@@ -16,12 +16,12 @@ class StartMenu:
         open('highscores.txt', 'a').close()  # Создает файл, если его нет
 
 # Возвращает номер кнопки на которую наведен курсор: 0-new game; 1-highscores menu; 2-exit или None
-    def cur_in_button(self, mouse_x, mouse_y):
-        if self.buttons[0].is_clicked(mouse_x, mouse_y):
+    def cur_in_button(self, pos):
+        if self.buttons[0].is_clicked(pos[0], pos[1]):
             return 0
-        elif self.buttons[1].is_clicked(mouse_x, mouse_y):
+        elif self.buttons[1].is_clicked(pos[0], pos[1]):
             return 1
-        elif self.buttons[2].is_clicked(mouse_x, mouse_y):
+        elif self.buttons[2].is_clicked(pos[0], pos[1]):
             return 2
         else:
             return None
