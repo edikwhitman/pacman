@@ -5,11 +5,15 @@ from button import Button
 
 class StartMenu:
     def __init__(self, screen):
+        self.screen = screen
         self.scores = []
         self.buttons = []
-        self.buttons.append(Button(1, 46, 300, 71, 356, 'images/start_button.png', 'images/start_button_pressed.png'))  # start game
-        self.buttons.append(Button(2, 46, 400, 47, 166, 'images/scores_button.png', 'images/scores_button_pressed.png'))  # scores
-        self.buttons.append(Button(3, 236, 400, 47, 166, 'images/exit_button.png', 'images/exit_button_pressed.png'))  # exit
+        # Start button
+        self.buttons.append(Button(1, 46, 300, 71, 356, 'images/start_button.png', 'images/start_button_pressed.png'))
+        # Scores button
+        self.buttons.append(Button(2, 46, 400, 47, 166, 'images/scores_button.png', 'images/scores_button_pressed.png'))
+        # Exit button
+        self.buttons.append(Button(3, 236, 400, 47, 166, 'images/exit_button.png', 'images/exit_button_pressed.png'))
         open('highscores.txt', 'a').close()  # Создает файл, если его нет
         self.start_menu_image = pygame.image.load("images/menu.png")
 
@@ -18,10 +22,10 @@ class StartMenu:
             button.logic(pygame.mouse.get_pos())
 
     # Отрисовка не статичных объектов (кнопки)
-    def process_drawing(self, screen):
-        screen.blit(self.start_menu_image, (0, 0))
+    def process_drawing(self):
+        self.screen.blit(self.start_menu_image, (0, 0))
         for button in self.buttons:
-            button.draw(screen)
+            button.draw(self.screen)
 
     # Обработка ивентов
     def check_event(self, event):
@@ -36,13 +40,13 @@ class StartMenu:
                 print('start game')
 
     def get_pressed_button(self):
-        for but in self.buttons:
-            if but.status == 1:
-                print(but.index)
-                return but.index
+        for button in self.buttons:
+            if button.status == 1:
+                print(button.index)
+                return button.index
         return None
 
-    ###### работа с рекордами #######
+    # работа с рекордами #
 
     # Выгрузка рекордов из файла в память
     def load_scores(self):
