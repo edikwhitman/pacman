@@ -8,15 +8,17 @@ class StartMenu:
         self.screen = screen
         self.scores = []
         self.buttons = []
-        pygame.mixer.music.load('click.mp3')  # Звук нажатия
         # Start button
-        self.buttons.append(Button(1, 46, 300, 71, 356, 'images/start_button.png', 'images/start_button_pressed.png'))
+        self.buttons.append(
+            Button(1, 46, 300, 71, 356, 'images/ui/button_start_static.png', 'images/ui/button_start_pressed.png'))
         # Scores button
-        self.buttons.append(Button(2, 46, 400, 47, 166, 'images/scores_button.png', 'images/scores_button_pressed.png'))
+        self.buttons.append(
+            Button(2, 46, 400, 47, 166, 'images/ui/button_scores_static.png', 'images/ui/button_scores_pressed.png'))
         # Exit button
-        self.buttons.append(Button(3, 236, 400, 47, 166, 'images/exit_button.png', 'images/exit_button_pressed.png'))
+        self.buttons.append(
+            Button(3, 236, 400, 47, 166, 'images/ui/button_exit_static.png', 'images/ui/button_exit_pressed.png'))
         # open('highscores.txt', 'a').close()  # Создает файл, если его нет (пока не надо)
-        self.start_menu_image = pygame.image.load("images/menu.png")
+        self.start_menu_image = pygame.image.load("images/ui/main_menu.png")
 
     def process_logic(self):
         for button in self.buttons:
@@ -33,7 +35,6 @@ class StartMenu:
         if event.type == pygame.MOUSEBUTTONDOWN:
             pressed_button = self.get_pressed_button()
             if pressed_button == 1 or pressed_button == 2 or pressed_button == 3:
-                pygame.mixer.music.play()
                 if pressed_button == 3:
                     pygame.quit()
                     sys.exit()
