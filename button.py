@@ -2,7 +2,7 @@ import pygame
 
 
 class Button:
-    def __init__(self, index, x, y, height, width, static_img, on_pressed_img):
+    def __init__(self, index, x, y, width, height, static_img, on_pressed_img):
         self.index = index
         self.x = x
         self.y = y
