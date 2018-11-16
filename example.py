@@ -6,6 +6,7 @@ from config import BLACK, WIDTH, HEIGHT, SIZE
 
 def main():
     pygame.init()
+    pygame.mixer.init()
     screen = pygame.display.set_mode(SIZE)
     pygame.display.set_caption('PAC-MAN')
     a = StartMenu(screen)
