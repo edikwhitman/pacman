@@ -70,6 +70,11 @@ class StartMenu:
                         self.map_num = (self.map_num - 1) % len(self.maps)
                     elif pressed_button == 5:
                         self.map_num = (self.map_num + 1) % len(self.maps)
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    self.map_num = (self.map_num - 1) % len(self.maps)
+                elif event.key == pygame.K_RIGHT:
+                    self.map_num = (self.map_num + 1) % len(self.maps)
             elif event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
