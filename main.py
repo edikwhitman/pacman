@@ -12,6 +12,7 @@ def main():
     menu = StartMenu(screen)
 
     menu.load_maps()
+    # Выгрузка рекордов всех карт
 
     while True:
         main_menu_loop_run = True
@@ -25,10 +26,16 @@ def main():
             pygame.display.flip()
             pygame.time.wait(10)
 
-        game_loop_run = True
+        # game_loop_run = True
+        # Получение карты для игры из класса menu
 
-        while game_loop_run:  # Сцена игры
-            game_loop_run = False
+        # Сцена игры
+
+        # Получение счета из класса игры
+        # Добавление счета и выгрузка в файл
+        #
+
+        # Сцена послеигрового меню
 
 
 if __name__ == '__main__':

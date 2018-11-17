@@ -10,45 +10,46 @@ class StartMenu:
     def __init__(self, screen):
         self.screen = screen
         self.maps = []
-        self.map_num = 0
+        self.__number_of_maps = 0
+        self.__map_num = 0
         self.scores = []
-        self.buttons = []
-        self.font = pygame.font.SysFont('arial', 40)
+        self.__buttons = []
+        self.__font = pygame.font.SysFont('arial', 40)
 
         # Start button
-        self.buttons.append(
+        self.__buttons.append(
             Button(1, 46, 350, 356, 71, 'images/ui/button_start_static.png', 'images/ui/button_start_pressed.png'))
         # Scores button
-        self.buttons.append(
+        self.__buttons.append(
             Button(2, 46, 450, 166, 47, 'images/ui/button_scores_static.png', 'images/ui/button_scores_pressed.png'))
         # Exit button
-        self.buttons.append(
+        self.__buttons.append(
             Button(3, 236, 450, 166, 47, 'images/ui/button_exit_static.png', 'images/ui/button_exit_pressed.png'))
         # Left arrow
-        self.buttons.append(
+        self.__buttons.append(
             Button(4, 100, 230, 31, 51, 'images/ui/arrow_left_static.png', 'images/ui/arrow_left_pressed.png'))
         # Right arrow
-        self.buttons.append(
+        self.__buttons.append(
             Button(5, 320, 230, 31, 51, 'images/ui/arrow_right_static.png', 'images/ui/arrow_right_pressed.png'))
         open('highscores.txt', 'a').close()  # Создает файл, если его нет (пока не надо)
         self.start_menu_image = pygame.image.load("images/ui/main_menu.png")
 
     def process_logic(self):
-        for button in self.buttons:
+        for button in self.__buttons:
             button.logic(pygame.mouse.get_pos())
 
     # Отрисовка не статичных объектов (кнопки)
     def process_drawing(self):
         self.screen.fill((200, 200, 200))
 
-        self.screen.blit(self.maps[self.map_num].preview_img, (168, 200))  # отрисовка превью картинки
+        self.screen.blit(self.maps[self.__map_num].preview_img, (168, 200))  # отрисовка превью картинки
 
         self.screen.blit(self.start_menu_image, (0, 0))  # отрисовка картинки менюшки
 
-        for button in self.buttons:  # отрисовка кнопок
+        for button in self.__buttons:  # отрисовка кнопок
             button.draw(self.screen)
 
-        text = self.font.render(self.maps[self.map_num].name, True, (200, 200, 200))
+        text = self.__font.render(self.maps[self.__map_num].name, True, (60, 60, 255))
         text_rect = text.get_rect(center=(WIDTH / 2, 165))
         self.screen.blit(text, text_rect)
 
@@ -57,51 +58,56 @@ class StartMenu:
         response = None
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
-                pressed_button = self.get_pressed_button()
+                pressed_button = self.__get_pressed_button()
                 if pressed_button is not None:
+                    # Выход из игры
                     if pressed_button == 3:
                         pygame.quit()
                         sys.exit()
+                    # Вызов меню рекордов
                     elif pressed_button == 2:
                         print('high scores menu run')
+                    # Старт игры
                     elif pressed_button == 1:
                         response = 1
+                    # Смена карты
                     elif pressed_button == 4:
-                        self.map_num = (self.map_num - 1) % len(self.maps)
+                        self.__switch_map(-1)
                     elif pressed_button == 5:
-                        self.map_num = (self.map_num + 1) % len(self.maps)
+                        self.__switch_map(1)
             elif event.type == pygame.KEYDOWN:
+                # Смена карты
                 if event.key == pygame.K_LEFT:
-                    self.map_num = (self.map_num - 1) % len(self.maps)
+                    self.__switch_map(-1)
                 elif event.key == pygame.K_RIGHT:
-                    self.map_num = (self.map_num + 1) % len(self.maps)
+                    self.__switch_map(1)
             elif event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
         return response
 
-    def get_pressed_button(self):
-        for button in self.buttons:
-            if button.status == 1:
-                print(button.index)
+    def __get_pressed_button(self):
+        for button in self.__buttons:
+            if button.get_status() == 1:
+                # print(button.index)
                 return button.index
         return None
 
     """
-    
     Работа с картами
-    
     """
 
     def load_maps(self):
         files = os.listdir('maps')
         for map_ in files:
             self.maps.append(Map(map_))
+        self.__number_of_maps = len(self.maps)
+
+    def __switch_map(self, num):
+        self.__map_num = (self.__map_num + num) % self.__number_of_maps
 
     """
-     
     Работа с рекордами
-    
     """
 
     # Выгрузка рекордов из файла в память
