@@ -82,14 +82,22 @@ class StartMenu:
                 return button.index
         return None
 
-    ##### работа с картами #
+    """
+    
+    Работа с картами
+    
+    """
 
     def load_maps(self):
         files = os.listdir('maps')
         for map_ in files:
             self.maps.append(Map(map_))
 
-    ##### работа с рекордами #
+    """
+     
+    Работа с рекордами
+    
+    """
 
     # Выгрузка рекордов из файла в память
     def load_scores(self):
