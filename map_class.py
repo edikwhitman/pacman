@@ -1,7 +1,7 @@
 from pygame import image
 
 
-class Map():
+class Map:
     def __init__(self, name):
         self.name = name
         self.char_map = []

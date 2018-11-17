@@ -82,7 +82,7 @@ class StartMenu:
                 return button.index
         return None
 
-    ##### Табота с картами #
+    ##### работа с картами #
 
     def load_maps(self):
         files = os.listdir('maps')
