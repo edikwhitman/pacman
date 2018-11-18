@@ -15,7 +15,7 @@ class Button:
     def draw(self, screen):
         if self.__status == 0:
             screen.blit(self.__img_static, (self.__x, self.__y))
-        elif self.__status == 1:
+        elif self.__status == 1 or self.__status == 2:
             screen.blit(self.__img_on_pressed, (self.__x, self.__y))
 
     def logic(self, cur_xy):
@@ -27,3 +27,6 @@ class Button:
 
     def get_status(self):
         return self.__status
+
+    def set_status(self, status):
+        self.__status = status

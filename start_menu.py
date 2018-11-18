@@ -79,8 +79,10 @@ class StartMenu:
                 # Смена карты
                 if event.key == pygame.K_LEFT:
                     self.__switch_map(-1)
+                    self.__buttons[3].set_status(2)
                 elif event.key == pygame.K_RIGHT:
                     self.__switch_map(1)
+                    self.__buttons[4].set_status(2)
             elif event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
