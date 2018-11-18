@@ -3,7 +3,7 @@ import sys
 import os
 from button import Button
 from map_class import Map
-from config import HEIGHT, WIDTH
+from config import WIDTH, BLUE
 
 
 class StartMenu:
@@ -14,7 +14,7 @@ class StartMenu:
         self.__map_num = 0
         self.scores = []
         self.__buttons = []
-        self.__font = pygame.font.SysFont('arial', 40)
+        self.__font = pygame.font.Font('font.ttf', 40)
 
         # Start button
         self.__buttons.append(
@@ -40,7 +40,7 @@ class StartMenu:
 
     # Отрисовка не статичных объектов (кнопки)
     def process_drawing(self):
-        self.screen.fill((200, 200, 200))
+        self.screen.fill(BLUE)
 
         self.screen.blit(self.maps[self.__map_num].preview_img, (168, 200))  # отрисовка превью картинки
 
@@ -49,7 +49,7 @@ class StartMenu:
         for button in self.__buttons:  # отрисовка кнопок
             button.draw(self.screen)
 
-        text = self.__font.render(self.maps[self.__map_num].name, True, (60, 60, 255))
+        text = self.__font.render(self.maps[self.__map_num].name, True, BLUE)
         text_rect = text.get_rect(center=(WIDTH / 2, 165))
         self.screen.blit(text, text_rect)
 
