@@ -34,6 +34,17 @@ class StartMenu:
         open('highscores.txt', 'a').close()  # Создает файл, если его нет (пока не надо)
         self.start_menu_image = pygame.image.load("images/ui/main_menu.png")
 
+    def main_loop(self):
+        main_menu_loop_run = True
+        while main_menu_loop_run:  # Сцена меню
+            self.process_logic()
+            if self.check_event() == 1:
+                main_menu_loop_run = False
+            self.process_drawing()
+
+            pygame.display.flip()
+            pygame.time.wait(10)
+
     def process_logic(self):
         for button in self.__buttons:
             button.logic(pygame.mouse.get_pos())
@@ -98,6 +109,9 @@ class StartMenu:
     """
     Работа с картами
     """
+
+    def get_map(self):
+        pass
 
     def load_maps(self):
         files = os.listdir('maps')

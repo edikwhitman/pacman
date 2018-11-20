@@ -1,6 +1,7 @@
 import pygame
 from config import SIZE
 from start_menu import StartMenu
+from game_class import Game
 
 
 def main():
@@ -10,26 +11,17 @@ def main():
     pygame.display.set_caption('PAC-MAN')
 
     menu = StartMenu(screen)
+    game = Game(screen)
 
     menu.load_maps()
     # Выгрузка рекордов всех карт
 
     while True:
-        main_menu_loop_run = True
+        menu.main_loop()  # Основной цикл меню
 
-        while main_menu_loop_run:  # Сцена меню
-            menu.process_logic()
-            if menu.check_event() == 1:
-                main_menu_loop_run = False
-            menu.process_drawing()
+        game.set_map(menu.get_map)  # Установка карты # Получение карты для игры из класса menu
 
-            pygame.display.flip()
-            pygame.time.wait(10)
-
-        # game_loop_run = True
-        # Получение карты для игры из класса menu
-
-        # Сцена игры
+        game.main_loop() # Основной цикл игры
 
         # Получение счета из класса игры
         # Добавление счета и выгрузка в файл
