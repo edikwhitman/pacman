@@ -2,13 +2,13 @@ import pygame
 import sys
 import os
 from button import Button
-from map_class import Map
 from config import WIDTH, BLUE
 
 
 class Game:
     def __init__(self, screen):
         self.screen = screen  # Плоскость отображения
+        self.map_img = 0
         self.map = []  # карта в виде символов (31 строка по 28 символов):
         # 0 - стена
         # 1 - малое зерно
@@ -21,6 +21,7 @@ class Game:
         # 8 - пустая клетка
 
     def main_loop(self):
+        print('game loop run')
         game_loop_run = True
         while game_loop_run:  # Сцена меню
             self.__process_logic()
@@ -30,6 +31,7 @@ class Game:
 
             pygame.display.flip()
             pygame.time.wait(10)
+        print('game loop stop')
 
     def __process_logic(self):
         pass
@@ -51,6 +53,8 @@ class Game:
             pass
         return 1
 
-    def set_map(self, map):
-        self.map = map
+    def set_map(self, arguments):
+        self.map, self.map_img = arguments
+        print('loaded')
+        # self.map_i, self.map_img = arguments
         # установка остальных необходимых значений

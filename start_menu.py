@@ -2,8 +2,13 @@ import pygame
 import sys
 import os
 from button import Button
-from map_class import Map
 from config import WIDTH, BLUE
+
+
+class Map:
+    def __init__(self, name):
+        self.name = name
+        self.preview_img = pygame.image.load("maps/{}/map_preview.png".format(name))
 
 
 class StartMenu:
@@ -110,8 +115,15 @@ class StartMenu:
     Работа с картами
     """
 
-    def get_map(self):
-        pass
+    def get_map_data(self):
+        map_data = []
+        with open("maps/{}/map_config.txt".format(self.maps[self.__map_num].name), 'r') as f:
+            for line in f:
+                line_data = []
+                for i in range(28):
+                    line_data.append(line[i])
+                map_data.append(line_data)
+        return map_data, pygame.image.load("maps/{}/map_img.png".format(self.maps[self.__map_num].name))
 
     def load_maps(self):
         files = os.listdir('maps')
