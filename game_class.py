@@ -23,19 +23,19 @@ class Game:
     def main_loop(self):
         game_loop_run = True
         while game_loop_run:  # Сцена меню
-            self.process_logic()
-            if self.check_event() == 1:
+            self.__process_logic()
+            if self.__check_event() == 1:
                 game_loop_run = False
-            self.process_drawing()
+            self.__process_drawing()
 
             pygame.display.flip()
             pygame.time.wait(10)
 
-    def process_logic(self):
+    def __process_logic(self):
         pass
 
     # Отрисовка не статичных объектов (кнопки)
-    def process_drawing(self):
+    def __process_drawing(self):
         # Очередь отрисовки:
         # 1. изображение карты map_img.png
         # 2. зерна и фрукты
@@ -45,7 +45,7 @@ class Game:
         pass
 
     # Обработка ивентов
-    def check_event(self):
+    def __check_event(self):
         response = None
         for event in pygame.event.get():
             pass
