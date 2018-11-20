@@ -69,6 +69,14 @@ class Game:
                 pygame.quit()
                 sys.exit()
 
+    def __reset_grains(self):
+        for i in range(31):
+            for j in range(28):
+                if self.map[i][j] == '2':
+                    self.map[i][j] = '1'
+                elif self.map[i][j] == '4':
+                    self.map[i][j] = '3'
+
     def set_map(self, arguments):
         self.map, self.map_img = arguments
         print('loaded')
