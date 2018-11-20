@@ -7,7 +7,7 @@ class Pacman(AnimatedCharacter):
     def __init__(self, x, y, width, height, time=1):
         self.x = x
         self.y = y
-        self.img_src = pygame.image.load("./images/pacman_eat.png")
+        self.img_src = pygame.image.load("./images/entity/pacman_eat.png")
         self.sprites_cnt = 4
         self.sprite_width = self.img_src.get_rect().width // self.sprites_cnt
         self.sprite_height = self.img_src.get_rect().height
@@ -28,13 +28,13 @@ class Pacman(AnimatedCharacter):
 
     def setEatAnimation(self):
         self.anim_status = 0
-        self.setAnimation("./images/pacman_eat.png", 4)
+        self.setAnimation("./images/entity/pacman_eat.png", 4)
 
     def setDeathAnimation(self):
         if not self.anim_status == 1:
             self.anim_status = 1
-            self.setAnimation("./images/pacman_death.png", 11, 3, False)
+            self.setAnimation("./images/entity/pacman_death.png", 11, 3, False)
 
     def setStandAnimation(self):
         self.anim_status = 2
-        self.setAnimation("./images/pacman_stand.png", 1)
+        self.setAnimation("./images/entity/pacman_stand.png", 1)
