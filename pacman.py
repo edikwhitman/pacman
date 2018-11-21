@@ -1,6 +1,7 @@
 from character import AnimatedCharacter
 import pygame
 
+
 class Pacman(AnimatedCharacter):
 
     def __init__(self, x, y, width, height, img_src, sprites_cnt, time=1):

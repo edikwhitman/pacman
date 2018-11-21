@@ -1,6 +1,7 @@
 import pygame
 import sys
 import os
+from character import Character
 from button import Button
 from config import WIDTH, BLUE
 
@@ -54,10 +55,12 @@ class Game:
                     self.screen.blit(self.big_grain_img, (j * 16, (i * 16) + 48))
 
         # 3. pac man
+        Character.draw()
+
         # self.pacman.draw(self.screen)
         # 4. ghosts
         # for ghost in self.ghosts:
-        #     ghost.draw()
+        #     ghost.draw()git
         # 5. scores
         #
         pass
