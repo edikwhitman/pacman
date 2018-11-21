@@ -9,6 +9,8 @@ class Game:
     def __init__(self, screen):
         self.screen = screen  # Плоскость отображения
         self.map_img = 0
+        self.pacman_start_spawn = None
+        self.fruit_spawn = None
         self.grain_img = pygame.image.load('images/entity/grain.png')
         self.big_grain_img = pygame.image.load('images/entity/grain_big.png')
         self.map = []  # карта в виде символов (31 строка по 28 символов):
@@ -80,5 +82,24 @@ class Game:
     def set_map(self, arguments):
         self.map, self.map_img = arguments
         print('loaded')
-        # self.map_i, self.map_img = arguments
+
+        self.pacman_start_spawn = None
+        self.fruit_spawn = None
+        # Установка точки спавна PacMan'а и других необходимых элементов
+        previous_char = None
+        for i in range(31):
+            for j in range(28):
+                char = self.map[i][j]
+                if char == '9' and previous_char == '9':
+                    self.pacman_start_spawn = (j*16 - 8, i*16 + 48)
+                elif char == '6' and previous_char == '6':
+                    self.fruit_spawn = (j*16 - 8, i*16 + 48)
+                previous_char = self.map[i][j]
+            previous_char = None
+
+        if self.pacman_start_spawn is None:
+            print('Error: No pacman start spawn point in map config file')
+        if self.fruit_spawn is None:
+            print('Error: No fruit spawn point in map config file')
+
         # установка остальных необходимых значений
