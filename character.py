@@ -54,8 +54,8 @@ class Character():  # Статичный персонаж
 
 
 class AnimatedCharacter(Character):  # Анимированный персонаж
-    def __init__(self, x, y, img_src, sprites_cnt, width, height, time=1,
-                 loop=True):  # img_src - изображение с набором спрайтов (без отступов, в один ряд), sprites_cnt - количество спрайтов, loop - зацикливание анимации, time - время анимации
+    def __init__(self, x, y, img_src, sprites_cnt, width, height, time=1, loop=True):  # img_src - изображение с набором спрайтов (без отступов, в один ряд), sprites_cnt - количество спрайтов, loop - зацикливание анимации, time - время анимации
+        super().__init__(x, y, img_src, width, height)
         self.x = x
         self.y = y
         self.img_src = pygame.image.load(img_src)

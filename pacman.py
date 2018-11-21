@@ -1,10 +1,10 @@
 from character import AnimatedCharacter
-from character import Character
 import pygame
 
 class Pacman(AnimatedCharacter):
 
-    def __init__(self, x, y, width, height, time=1):
+    def __init__(self, x, y, width, height, img_src, sprites_cnt, time=1):
+        super().__init__(x, y, img_src, sprites_cnt, width, height, time)
         self.x = x
         self.y = y
         self.img_src = pygame.image.load("./images/entity/pacman_eat.png")
