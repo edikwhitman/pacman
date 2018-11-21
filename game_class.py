@@ -10,6 +10,10 @@ class Game:
     def __init__(self, screen):
         self.screen = screen  # Плоскость отображения
         self.map_img = 0
+
+        #self.image_pac = pygame.image.load('images/entity/pacman_stand.png')
+        #self.pac1 = Character(координаты, self.pac, ширина, высота)
+
         self.grain_img = pygame.image.load('images/entity/grain.png')
         self.big_grain_img = pygame.image.load('images/entity/grain_big.png')
         self.map = []  # карта в виде символов (31 строка по 28 символов):
@@ -55,9 +59,9 @@ class Game:
                     self.screen.blit(self.big_grain_img, (j * 16, (i * 16) + 48))
 
         # 3. pac man
-        Character.draw()
+        #self.pac1.draw(screen)
 
-        # self.pacman.draw(self.screen)
+
         # 4. ghosts
         # for ghost in self.ghosts:
         #     ghost.draw()git
