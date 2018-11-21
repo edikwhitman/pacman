@@ -11,8 +11,8 @@ class Game:
         self.screen = screen  # Плоскость отображения
         self.map_img = 0
 
-        #self.image_pac = pygame.image.load('images/entity/pacman_stand.png')
-        #self.pac1 = Character(координаты, self.pac, ширина, высота)
+        # self.image_pac = pygame.image.load('images/entity/pacman_stand.png')
+        # self.pac1 = Character(координаты, self.pac, ширина, высота)
 
         self.grain_img = pygame.image.load('images/entity/grain.png')
         self.big_grain_img = pygame.image.load('images/entity/grain_big.png')
@@ -59,8 +59,7 @@ class Game:
                     self.screen.blit(self.big_grain_img, (j * 16, (i * 16) + 48))
 
         # 3. pac man
-        #self.pac1.draw(screen)
-
+        # self.pac1.draw(screen)
 
         # 4. ghosts
         # for ghost in self.ghosts:

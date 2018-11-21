@@ -15,7 +15,7 @@ class Pacman(AnimatedCharacter):
         self.width = width
         self.height = height
         self.angle = 0
-        self.sprites = self.splitSprites(self.img_src)
+        self.sprites = self.split_sprites(self.img_src)
         self.object = self.sprites[0]
         self.object_rect = self.sprites[0].get_rect()
         self.time = time
@@ -24,18 +24,18 @@ class Pacman(AnimatedCharacter):
         self.frame = 0
         self.loop = True
         self.end = False
-        self.setPosition(self.x, self.y)
-        self.anim_status = 0  # 0 - есть, 1 - анимация смерти, 2 - стоять
+        self.set_position(self.x, self.y)
+        self.animation_status = 0  # 0 - есть, 1 - анимация смерти, 2 - стоять
 
-    def setEatAnimation(self):
-        self.anim_status = 0
-        self.setAnimation("./images/entity/pacman_eat.png", 4)
+    def set_eat_animation(self):
+        self.animation_status = 0
+        self.set_animation("./images/entity/pacman_eat.png", 4)
 
-    def setDeathAnimation(self):
-        if not self.anim_status == 1:
-            self.anim_status = 1
-            self.setAnimation("./images/entity/pacman_death.png", 11, 3, False)
+    def set_death_animation(self):
+        if not self.animation_status == 1:
+            self.animation_status = 1
+            self.set_animation("./images/entity/pacman_death.png", 11, 3, False)
 
-    def setStandAnimation(self):
-        self.anim_status = 2
-        self.setAnimation("./images/entity/pacman_stand.png", 1)
+    def set_stand_animation(self):
+        self.animation_status = 2
+        self.set_animation("./images/entity/pacman_stand.png", 1)
