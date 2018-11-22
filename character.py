@@ -1,7 +1,7 @@
 import pygame
 
 
-class Character():  # Статичный персонаж
+class Character:  # Статичный персонаж
     def __init__(self, x, y, img_src, width, height):  # x, y - координаты, img_src - спрайт
         self.x = x
         self.y = y
@@ -55,9 +55,10 @@ class Character():  # Статичный персонаж
 
 class AnimatedCharacter(Character):  # Анимированный персонаж
     def __init__(self, x, y, img_src, sprites_cnt, width, height, loop=True,
-                 time=1):  # img_src - изображение с набором спрайтов (без отступов, в один ряд), sprites_cnt - количество спрайтов, loop - зацикливание анимации, time - время анимации
+                 time=1):  # img_src - изображение с набором спрайтов (без отступов, в один ряд), sprites_cnt -
+        # количество спрайтов, loop - зацикливание анимации, time - время анимации
         super().__init__(x, y, img_src, width, height)
-        self.set_animation(img_src, sprites_cnt, time, loop)
+        self.set_animation(img_src, sprites_cnt, loop, time)
         self.object = self.sprites[0]
         self.object_rect = self.sprites[0].get_rect()
         self.set_position(self.x, self.y)
@@ -65,8 +66,10 @@ class AnimatedCharacter(Character):  # Анимированный персона
 
     def split_sprites(self, img_src, sprites_cnt=None, first_sprite=0,
                       last_sprite=-1):  # Разделение изображения img_src на спрайты
-        if not sprites_cnt == None: self.sprites_cnt = sprites_cnt
-        if last_sprite == -1: last_sprite = self.sprites_cnt
+        if sprites_cnt is not None:
+            self.sprites_cnt = sprites_cnt
+        if last_sprite == -1:
+            last_sprite = self.sprites_cnt
         sprites = []
         for c in range(first_sprite, last_sprite):
             sprites.append(img_src.subsurface((c * self.sprite_width, 0, self.sprite_width, self.sprite_height)))
