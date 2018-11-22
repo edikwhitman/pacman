@@ -4,7 +4,7 @@ from pacman import Pacman
 
 
 def window_creation():
-    print("Нажмите D, чтобы показать анимацию смерти")
+    print("Нажмите V, чтобы показать анимацию смерти")
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
     pacman = Pacman(100, 100, 32, 32)
