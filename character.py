@@ -54,29 +54,15 @@ class Character:  # Статичный персонаж
 
 
 class AnimatedCharacter(Character):  # Анимированный персонаж
-    def __init__(self, x, y, img_src, sprites_cnt, width, height, time=1,
-                 loop=True):  # img_src - изображение с набором спрайтов (без отступов, в один ряд), sprites_cnt -
+    def __init__(self, x, y, img_src, sprites_cnt, width, height, loop=True,
+                 time=1):  # img_src - изображение с набором спрайтов (без отступов, в один ряд), sprites_cnt -
         # количество спрайтов, loop - зацикливание анимации, time - время анимации
         super().__init__(x, y, img_src, width, height)
-        self.x = x
-        self.y = y
-        self.img_src = pygame.image.load(img_src)
-        self.sprite_width = self.img_src.get_rect().width // sprites_cnt
-        self.sprite_height = self.img_src.get_rect().height
-        self.sprites_cnt = sprites_cnt
-        self.width = width
-        self.height = height
-        self.angle = 0
-        self.sprites = self.split_sprites(self.img_src)
+        self.set_animation(img_src, sprites_cnt, loop, time)
         self.object = self.sprites[0]
         self.object_rect = self.sprites[0].get_rect()
-        self.time = time
-        self.work_time = 0
-        self.skip_frame = 0
-        self.frame = 0
-        self.loop = loop
-        self.end = False
         self.set_position(self.x, self.y)
+        self.end = False
 
     def split_sprites(self, img_src, sprites_cnt=None, first_sprite=0,
                       last_sprite=-1):  # Разделение изображения img_src на спрайты
@@ -84,7 +70,6 @@ class AnimatedCharacter(Character):  # Анимированный персона
             self.sprites_cnt = sprites_cnt
         if last_sprite == -1:
             last_sprite = self.sprites_cnt
-
         sprites = []
         for c in range(first_sprite, last_sprite):
             sprites.append(img_src.subsurface((c * self.sprite_width, 0, self.sprite_width, self.sprite_height)))
@@ -105,10 +90,7 @@ class AnimatedCharacter(Character):  # Анимированный персона
     def get_sprite(self):  # Вернуть спрайт
         return self.sprites[self.frame]
 
-    def set_time(self, time):  # Задать время для анимации
-        self.time = time
-
-    def set_animation(self, img_src, sprites_cnt, time=1, loop=True):  # Задать изображение со спрайтами
+    def set_animation(self, img_src, sprites_cnt, loop=True, time=1):  # Задать изображение со спрайтами
         self.img_src = pygame.image.load(img_src)
         self.sprite_width = self.img_src.get_rect().width // sprites_cnt
         self.sprite_height = self.img_src.get_rect().height
