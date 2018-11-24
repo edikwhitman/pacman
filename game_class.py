@@ -1,9 +1,7 @@
 import pygame
 import sys
-import os
-from character import Character
-from button import Button
-from config import WIDTH, BLUE
+from pacman import Pacman
+from config import BLACK
 
 
 class Game:
@@ -13,7 +11,7 @@ class Game:
         self.pacman_start_spawn = None
         self.fruit_spawn = None
         # self.image_pac = pygame.image.load('images/entity/pacman_stand.png')
-        # self.pac1 = Character(координаты, self.pac, ширина, высота)
+        self.pacman = Pacman(0, 0, 32, 32, 3)
         self.grain_img = pygame.image.load('images/entity/grain.png')
         self.big_grain_img = pygame.image.load('images/entity/grain_big.png')
         self.map = []  # карта в виде символов (31 строка по 28 символов):
@@ -26,8 +24,14 @@ class Game:
         # 6 - съеденная вишенка
         # 7 - одна из 18 клеток комнаты спавна приведений
         # 8 - пустая клетка
+        self.score = 0
+
+        self.hsp = 0  # Горизонтальная скорость
+        self.vsp = 0  # Вертикальная скорость
+        self.spd = 3  # Абсолютная скорость
 
     def main_loop(self):
+        self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
         print('game loop run')
         game_loop_run = True
         while game_loop_run:  # Сцена меню
@@ -36,15 +40,58 @@ class Game:
                 game_loop_run = False
             self.__process_drawing()
 
+            #pygame.draw.circle(self.screen, (0, 255, 0), ((self.pacman.x + 16) // 16 * 16, (self.pacman.y+54) // 16 * 16), 1)
+
+            if self.pacman.movement_direction_queue == 3 and self.map[(self.pacman.y + 16 - 48) // 16][(self.pacman.x -2) // 16] != "0":
+                self.pacman.movement_direction = 3
+
+            if self.pacman.movement_direction_queue == 4 and self.map[(self.pacman.y + 16 - 48) // 16][(self.pacman.x + 34) // 16] != "0":
+                self.pacman.movement_direction = 4
+
+            if self.pacman.movement_direction_queue == 1 and self.map[(self.pacman.y - 34) // 16][(self.pacman.x + 16) // 16] != "0":
+                self.pacman.movement_direction = 1
+
+            if self.pacman.movement_direction_queue == 2 and self.map[(self.pacman.y - 30) // 16][(self.pacman.x + 16) // 16] != "0":
+                self.pacman.movement_direction = 2
+
+            # --------------------COLLISION---------------------
+            if self.pacman.movement_direction == 3 and self.map[(self.pacman.y + 16 - 48) // 16][(self.pacman.x + 6) // 16] != "0":
+                self.pacman.set_rotation(270)  # Поворот изображения до 270
+                self.vsp = 0
+                self.hsp = -self.spd
+            elif self.pacman.movement_direction == 4 and self.map[(self.pacman.y + 16 - 48) // 16][(self.pacman.x + 26) // 16] != "0":
+                self.pacman.set_rotation(90)  # Поворот изображения до 90
+                self.vsp = 0
+                self.hsp = self.spd
+            elif self.pacman.movement_direction == 1 and self.map[(self.pacman.y - 42) // 16][(self.pacman.x + 16) // 16] != "0":
+                self.pacman.set_rotation(0)  # Поворот изображения до 0
+                self.vsp = -self.spd
+                self.hsp = 0
+            elif self.pacman.movement_direction == 2 and self.map[(self.pacman.y - 22) // 16][(self.pacman.x + 16) // 16] != "0":
+                self.pacman.set_rotation(180)  # Поворот изображения до 180
+                self.vsp = self.spd
+                self.hsp = 0
+            else:
+                print("Collision")
+                self.hsp = 0
+                self.vsp = 0
+
+
+
+            print((self.pacman.x) // 16, (self.pacman.y - 8) // 16, self.map[(self.pacman.y - 16) // 16][self.pacman.x // 16])
+
+
+
             pygame.display.flip()
             pygame.time.wait(10)
         print('game loop stop')
 
     def __process_logic(self):
-        pass
+        self.pacman.set_position(self.pacman.x + self.hsp, self.pacman.y + self.vsp)  # Изменение координат пакмана
 
     # Отрисовка не статичных объектов (кнопки)
     def __process_drawing(self):
+        self.screen.fill(BLACK)
         # Очередь отрисовки:
 
         # 1. изображение карты map_img.png
@@ -53,20 +100,20 @@ class Game:
         # 2. зерна и фрукты
         for i in range(31):
             for j in range(28):
+                #pygame.draw.circle(self.screen, (255, 0, 0),  (j * 16, i * 16 + 48), 1) #  ------------------------------Отладка------------------------------
                 if self.map[i][j] == '1':
                     self.screen.blit(self.grain_img, (j * 16, (i * 16) + 48))
                 elif self.map[i][j] == '3':
                     self.screen.blit(self.big_grain_img, (j * 16, (i * 16) + 48))
 
         # 3. pac man
-        # self.pac1.draw(screen)
+        self.pacman.draw(self.screen)
 
         # 4. ghosts
         # for ghost in self.ghosts:
         #     ghost.draw()git
         # 5. scores
         #
-        pass
 
     # Обработка ивентов
     def __check_event(self):
@@ -74,6 +121,19 @@ class Game:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_v:  # Показать анимацию смерти пакмана
+                    self.hsp = 0
+                    self.vsp = 0
+                    self.pacman.set_death_animation()
+                elif event.key == pygame.K_w or event.key == pygame.K_UP:  # Идти вверх
+                    self.pacman.movement_direction_queue = 1
+                elif event.key == pygame.K_a or event.key == pygame.K_LEFT:  # Идти влево
+                    self.pacman.movement_direction_queue = 3
+                elif event.key == pygame.K_s or event.key == pygame.K_DOWN:  # Идти вниз
+                    self.pacman.movement_direction_queue = 2
+                elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:  # Идти вправо
+                    self.pacman.movement_direction_queue = 4
 
     def __reset_grains(self):
         for i in range(31):
@@ -95,7 +155,7 @@ class Game:
             for j in range(28):
                 char = self.map[i][j]
                 if char == '9' and previous_char == '9':
-                    self.pacman_start_spawn = (j*16 - 8, i*16 + 48)
+                    self.pacman_start_spawn = (j*16 - 8 - 8, i*16 + 48 - 8)
                 elif char == '6' and previous_char == '6':
                     self.fruit_spawn = (j*16 - 8, i*16 + 48)
                 previous_char = self.map[i][j]
@@ -107,3 +167,6 @@ class Game:
             print('Error: No fruit spawn point in map config file')
 
         # установка остальных необходимых значений
+
+    def get_score(self):
+        return self.score
