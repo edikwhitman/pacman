@@ -2,24 +2,82 @@ import pygame
 import sys
 import os
 from button import Button
-from config import WIDTH, BLUE
+from config import WIDTH, BLUE, BLACK
 
 
+#-------------------------------------------------------- Map
 class Map:
     def __init__(self, name):
         self.name = name
         self.preview_img = pygame.image.load("maps/{}/map_preview.png".format(name))
+        self.scores = []
+        self.load_scores()
+    
+    # Выгрузка рекордов из файла в память
+    def load_scores(self):
+        with open('maps/{}/highscores.txt'.format(self.name), 'r') as f:
+            for line in f:
+                self.scores.append(int(line))
+        # print('loaded ', self.name)
+
+    # Добавление нового рекорда (только в память)
+    def add_new_score(self, num):
+        self.scores.append(num)
+        self.scores.sort(reverse=True)
+        if len(self.scores) > 10:
+            self.scores = self.scores[:-1]
+
+    # Запись всех рекодов из памяти в файл
+    def write_scores(self):
+        with open('maps/{}/highscores.txt'.format(self.name), 'w') as f:
+            for i in self.scores:
+                f.write('{}\n'.format(i))
+        # print('written to file ', self.scores)
 
 
+#-------------------------------------------------------- ScoresMenu
+class ScoresMenu:
+    def __init__(self):
+        self.__buttons = []
+        self.__font = pygame.font.Font('font.ttf', 20)
+
+        # Exit button
+        self.__buttons.append(
+            Button(3, 236, 450, 166, 47, 'images/ui/button_exit_static.png', 'images/ui/button_exit_pressed.png'))
+        # Left arrow
+        self.__buttons.append(
+            Button(1, 100, 230, 31, 51, 'images/ui/arrow_left_static.png', 'images/ui/arrow_left_pressed.png'))
+        # Right arrow
+        self.__buttons.append(
+            Button(2, 320, 230, 31, 51, 'images/ui/arrow_right_static.png', 'images/ui/arrow_right_pressed.png'))
+        
+    def main_loop(self):
+        for button in self.__main_buttons:
+            button.logic(pygame.mouse.get_pos())
+        self.draw
+
+    def draw(self, screen, map_):
+        screen.fill(BLACK)
+
+        for button in self.__buttons:  # отрисовка кнопок
+            button.draw(screen)
+
+        text = self.__font.render(map_.name, True, BLUE)
+        text_rect = text.get_rect(center=(WIDTH / 2, 50))
+        screen.blit(text, text_rect)
+
+
+#-------------------------------------------------------- StartMenu
 class StartMenu:
     def __init__(self, screen):
         self.screen = screen
         self.maps = []
         self.__number_of_maps = 0
         self.__map_num = 0
-        self.scores = []
         self.__buttons = []
+        self.__scores_buttons = []
         self.__font = pygame.font.Font('font.ttf', 40)
+        self.__load_maps() # Выгрузка рекордов всех карт
 
         # Start button
         self.__buttons.append(
@@ -54,7 +112,7 @@ class StartMenu:
         for button in self.__buttons:
             button.logic(pygame.mouse.get_pos())
 
-    # Отрисовка не статичных объектов (кнопки)
+    # Отрисовка
     def process_drawing(self):
         self.screen.fill(BLUE)
 
@@ -125,7 +183,7 @@ class StartMenu:
                 map_data.append(line_data)
         return map_data, pygame.image.load("maps/{}/map_img.png".format(self.maps[self.__map_num].name))
 
-    def load_maps(self):
+    def __load_maps(self):
         files = os.listdir('maps')
         for map_ in files:
             self.maps.append(Map(map_))
@@ -137,25 +195,3 @@ class StartMenu:
     """
     Работа с рекордами
     """
-
-    # Выгрузка рекордов из файла в память
-    def load_scores(self):
-        with open('highscores.txt', 'r') as f:
-            for line in f:
-                self.scores.append(int(line))
-        # print('loaded ', self.scores)
-
-    # Добавление нового рекорда (только в память)
-    def add_new_score(self, num):
-        self.scores.append(num)
-        # print('add/ added ', self.scores)
-        self.scores.sort(reverse=True)
-        self.scores = self.scores[:-1]
-        # print('add/ sorted ', self.scores)
-
-    # Запись всех рекодов из памяти в файл
-    def write_scores(self):
-        with open('highscores.txt', 'w') as f:
-            for i in range(10):
-                f.write('{}\n'.format(self.scores[i]))
-        # print('written to file ', self.scores)
