@@ -2,7 +2,7 @@ import pygame
 
 
 class Character:  # Статичный персонаж
-    def __init__(self, x, y, img_src, width, height):  # x, y - координаты, img_src - спрайт
+    def __init__(self, x, y, img_src='', width='16', height='16'):  # x, y - координаты, img_src - спрайт
         self.x = x
         self.y = y
         self.object = pygame.image.load(img_src)
@@ -54,7 +54,7 @@ class Character:  # Статичный персонаж
 
 
 class AnimatedCharacter(Character):  # Анимированный персонаж
-    def __init__(self, x, y, img_src, sprites_cnt, width, height, loop=True,
+    def __init__(self, x, y, img_src='', sprites_cnt=1, width=16, height=16, loop=True,
                  time=1):  # img_src - изображение с набором спрайтов (без отступов, в один ряд), sprites_cnt -
         # количество спрайтов, loop - зацикливание анимации, time - время анимации
         super().__init__(x, y, img_src, width, height)

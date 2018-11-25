@@ -12,10 +12,10 @@ class Game:
         self.map_img = 0
         self.pacman_start_spawn = None
         self.fruit_spawn = None
-        # self.image_pac = pygame.image.load('images/entity/pacman_stand.png')
+        # self.image_pac = pygame.image.load('images/entity/pacman/pacman_stand.png')
         # self.pac1 = Character(координаты, self.pac, ширина, высота)
-        self.grain_img = pygame.image.load('images/entity/grain.png')
-        self.big_grain_img = pygame.image.load('images/entity/grain_big.png')
+        self.grain_img = pygame.image.load('images/entity/grains/grain.png')
+        self.big_grain_img = pygame.image.load('images/entity/grains/grain_big.png')
         self.map = []  # карта в виде символов (31 строка по 28 символов):
         # 0 - стена
         # 1 - малое зерно
