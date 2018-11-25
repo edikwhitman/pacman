@@ -2,7 +2,7 @@ import pygame
 import sys
 import os
 from button import Button
-from config import WIDTH, BLUE, BLACK
+from config import WIDTH, BLUE, BLACK, WHITE
 
 
 #-------------------------------------------------------- Map
@@ -11,6 +11,7 @@ class Map:
         self.name = name
         self.preview_img = pygame.image.load("maps/{}/map_preview.png".format(name))
         self.scores = []
+        self.amount_of_scores = 0
         self.load_scores()
     
     # Выгрузка рекордов из файла в память
@@ -18,7 +19,8 @@ class Map:
         with open('maps/{}/highscores.txt'.format(self.name), 'r') as f:
             for line in f:
                 self.scores.append(int(line))
-        # print('loaded ', self.name)
+        self.amount_of_scores = len(self.scores)
+        print('loaded scores map:', self.name, self.scores)
 
     # Добавление нового рекорда (только в память)
     def add_new_score(self, num):
@@ -39,38 +41,86 @@ class Map:
 class ScoresMenu:
     def __init__(self):
         self.__buttons = []
-        self.__font = pygame.font.Font('font.ttf', 20)
+        self.__font = pygame.font.Font('font.ttf', 30)
 
-        # Exit button
-        self.__buttons.append(
-            Button(3, 236, 450, 166, 47, 'images/ui/button_exit_static.png', 'images/ui/button_exit_pressed.png'))
         # Left arrow
         self.__buttons.append(
-            Button(1, 100, 230, 31, 51, 'images/ui/arrow_left_static.png', 'images/ui/arrow_left_pressed.png'))
+            Button(1, 40, 35, 31, 51, 'images/ui/arrow_left_static.png', 'images/ui/arrow_left_pressed.png'))
         # Right arrow
         self.__buttons.append(
-            Button(2, 320, 230, 31, 51, 'images/ui/arrow_right_static.png', 'images/ui/arrow_right_pressed.png'))
+            Button(2, 380, 35, 31, 51, 'images/ui/arrow_right_static.png', 'images/ui/arrow_right_pressed.png'))
+        # Exit button
+        self.__buttons.append(
+            Button(3, 40, 500, 63, 47, 'images/ui/button_back_static.png', 'images/ui/button_back_pressed.png'))
         
-    def main_loop(self):
-        for button in self.__main_buttons:
-            button.logic(pygame.mouse.get_pos())
-        self.draw
+    def check_events(self):
+        response = None
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pressed_button = self.__get_pressed_button()
+                if pressed_button is not None:
+                    # Смена карты
+                    if pressed_button == 1:
+                        response = 1
+                    elif pressed_button == 2:
+                        response = 2
+                    # Выход из игры
+                    elif pressed_button == 3:
+                        response = 3
+            elif event.type == pygame.KEYDOWN:
+                # Смена карты
+                if event.key == pygame.K_LEFT:
+                    response = 1
+                elif event.key == pygame.K_RIGHT:
+                    response = 2
+                elif event.key == pygame.K_ESCAPE:
+                    response = 3
+            # Выход из игры
+            elif event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        return response
 
-    def draw(self, screen, map_):
+    def process_logic(self):
+        for button in self.__buttons:
+            button.logic(pygame.mouse.get_pos())
+    
+    def __get_pressed_button(self):
+        for button in self.__buttons:
+            if button.get_status() == 1:
+                # print(button.index)
+                return button.index
+        return None
+
+    def process_drawing(self, screen, map_):
         screen.fill(BLACK)
 
         for button in self.__buttons:  # отрисовка кнопок
             button.draw(screen)
 
-        text = self.__font.render(map_.name, True, BLUE)
-        text_rect = text.get_rect(center=(WIDTH / 2, 50))
+        text = self.__font.render(map_.name, True, BLUE) # отрисовка названия карты
+        text_rect = text.get_rect(center=(WIDTH / 2, 60))
         screen.blit(text, text_rect)
+
+        if map_.amount_of_scores == 0:
+            text = self.__font.render('no scores', True, WHITE)
+            screen.blit(text, (130,140))
+        else:
+            j = 1
+            for i in map_.scores:
+                # print('{}'.format(i))
+                text = self.__font.render('{}. {}'.format(j, i), True, WHITE)
+                text_rect = text.get_rect(center=(WIDTH / 2, 100 + j*35))
+                screen.blit(text, text_rect)
+                j += 1
+
 
 
 #-------------------------------------------------------- StartMenu
 class StartMenu:
     def __init__(self, screen):
         self.screen = screen
+        self.scores_menu_opened = False
         self.maps = []
         self.__number_of_maps = 0
         self.__map_num = 0
@@ -78,6 +128,7 @@ class StartMenu:
         self.__scores_buttons = []
         self.__font = pygame.font.Font('font.ttf', 40)
         self.__load_maps() # Выгрузка рекордов всех карт
+        self.scores_menu = ScoresMenu()
 
         # Start button
         self.__buttons.append(
@@ -94,19 +145,30 @@ class StartMenu:
         # Right arrow
         self.__buttons.append(
             Button(5, 320, 230, 31, 51, 'images/ui/arrow_right_static.png', 'images/ui/arrow_right_pressed.png'))
-        open('highscores.txt', 'a').close()  # Создает файл, если его нет (пока не надо)
+        # open('highscores.txt', 'a').close()  # Создает файл, если его нет (пока не надо)
         self.start_menu_image = pygame.image.load("images/ui/main_menu.png")
 
     def main_loop(self):
         main_menu_loop_run = True
         while main_menu_loop_run:  # Сцена меню
-            self.process_logic()
-            if self.check_event() == 1:
-                main_menu_loop_run = False
-            self.process_drawing()
+            if not self.scores_menu_opened:
+                self.process_logic()
+                if self.check_events() == 1:
+                    main_menu_loop_run = False
+                self.process_drawing()
+            else:
+                self.scores_menu.process_logic()
+                response = self.scores_menu.check_events()
+                if response == 1:
+                    self.__switch_map(-1)
+                elif response == 2:
+                    self.__switch_map(1)
+                elif response == 3:
+                    self.scores_menu_opened = False
+                self.scores_menu.process_drawing(self.screen, self.maps[self.__map_num])
 
             pygame.display.flip()
-            pygame.time.wait(10)
+            pygame.time.wait(20)
 
     def process_logic(self):
         for button in self.__buttons:
@@ -128,7 +190,7 @@ class StartMenu:
         self.screen.blit(text, text_rect)
 
     # Обработка ивентов
-    def check_event(self):
+    def check_events(self):
         response = None
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -140,7 +202,7 @@ class StartMenu:
                         sys.exit()
                     # Вызов меню рекордов
                     elif pressed_button == 2:
-                        print('high scores menu run')
+                        self.scores_menu_opened = True
                     # Старт игры
                     elif pressed_button == 1:
                         response = 1
@@ -191,7 +253,3 @@ class StartMenu:
 
     def __switch_map(self, num):
         self.__map_num = (self.__map_num + num) % self.__number_of_maps
-
-    """
-    Работа с рекордами
-    """
