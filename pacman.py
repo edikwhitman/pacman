@@ -9,8 +9,9 @@ class Pacman(AnimatedCharacter):
         self.animation_status = 0  # 0 - есть, 1 - анимация смерти, 2 - стоять
 
     def set_eat_animation(self):
-        self.animation_status = 0
-        self.set_animation("./images/entity/pacman_eat.png", 4)
+        if not self.animation_status == 0:
+            self.animation_status = 0
+            self.set_animation("./images/entity/pacman_eat.png", 4, True, self.time*3)
 
     def set_death_animation(self):
         if not self.animation_status == 1:

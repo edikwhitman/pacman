@@ -40,41 +40,56 @@ class Game:
                 game_loop_run = False
             self.__process_drawing()
 
-            #pygame.draw.circle(self.screen, (0, 255, 0), ((self.pacman.x + 16) // 16 * 16, (self.pacman.y+54) // 16 * 16), 1)
+            #pygame.draw.circle(self.screen, (0, 255, 0), ((self.pacman.x + 16) // 16 * 16, (self.pacman.y + 44) // 16 * 16), 1)
+
+            self.pacman.set_eat_animation()
 
             if self.pacman.movement_direction_queue == 3 and self.map[(self.pacman.y + 16 - 48) // 16][(self.pacman.x -2) // 16] != "0":
                 self.pacman.movement_direction = 3
+                self.pacman.movement_direction_queue = 0
+                self.pacman.set_x(self.pacman.x - 3)
 
-            if self.pacman.movement_direction_queue == 4 and self.map[(self.pacman.y + 16 - 48) // 16][(self.pacman.x + 34) // 16] != "0":
+            elif self.pacman.movement_direction_queue == 4 and self.map[(self.pacman.y + 16 - 48) // 16][(self.pacman.x + 34) // 16] != "0":
                 self.pacman.movement_direction = 4
+                self.pacman.movement_direction_queue = 0
+                self.pacman.set_x(self.pacman.x + 3)
 
-            if self.pacman.movement_direction_queue == 1 and self.map[(self.pacman.y - 34) // 16][(self.pacman.x + 16) // 16] != "0":
+            elif self.pacman.movement_direction_queue == 1 and self.map[(self.pacman.y - 44) // 16][(self.pacman.x + 16) // 16] != "0":
                 self.pacman.movement_direction = 1
+                self.pacman.movement_direction_queue = 0
+                self.pacman.set_y(self.pacman.y + 3)
 
-            if self.pacman.movement_direction_queue == 2 and self.map[(self.pacman.y - 30) // 16][(self.pacman.x + 16) // 16] != "0":
+            elif self.pacman.movement_direction_queue == 2 and self.map[(self.pacman.y-10) // 16][(self.pacman.x + 16) // 16] != "0":
                 self.pacman.movement_direction = 2
+                self.pacman.movement_direction_queue = 0
+                self.pacman.set_y(self.pacman.y - 3)
 
             # --------------------COLLISION---------------------
             if self.pacman.movement_direction == 3 and self.map[(self.pacman.y + 16 - 48) // 16][(self.pacman.x + 6) // 16] != "0":
                 self.pacman.set_rotation(270)  # Поворот изображения до 270
+                self.pacman.set_y((self.pacman.y) // 16 * 16 + 8)
                 self.vsp = 0
                 self.hsp = -self.spd
             elif self.pacman.movement_direction == 4 and self.map[(self.pacman.y + 16 - 48) // 16][(self.pacman.x + 26) // 16] != "0":
                 self.pacman.set_rotation(90)  # Поворот изображения до 90
+                self.pacman.set_y((self.pacman.y) // 16 * 16 + 8)
                 self.vsp = 0
                 self.hsp = self.spd
             elif self.pacman.movement_direction == 1 and self.map[(self.pacman.y - 42) // 16][(self.pacman.x + 16) // 16] != "0":
                 self.pacman.set_rotation(0)  # Поворот изображения до 0
+                self.pacman.set_x((self.pacman.x) // 16 * 16 + 8)
                 self.vsp = -self.spd
                 self.hsp = 0
             elif self.pacman.movement_direction == 2 and self.map[(self.pacman.y - 22) // 16][(self.pacman.x + 16) // 16] != "0":
                 self.pacman.set_rotation(180)  # Поворот изображения до 180
+                self.pacman.set_x((self.pacman.x) // 16 * 16 + 8)
                 self.vsp = self.spd
                 self.hsp = 0
             else:
                 print("Collision")
                 self.hsp = 0
                 self.vsp = 0
+                self.pacman.set_stand_animation()
 
 
 
