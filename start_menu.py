@@ -2,8 +2,13 @@ import pygame
 import sys
 import os
 from button import Button
-from map_class import Map
 from config import WIDTH, BLUE
+
+
+class Map:
+    def __init__(self, name):
+        self.name = name
+        self.preview_img = pygame.image.load("maps/{}/map_preview.png".format(name))
 
 
 class StartMenu:
@@ -33,6 +38,17 @@ class StartMenu:
             Button(5, 320, 230, 31, 51, 'images/ui/arrow_right_static.png', 'images/ui/arrow_right_pressed.png'))
         open('highscores.txt', 'a').close()  # Создает файл, если его нет (пока не надо)
         self.start_menu_image = pygame.image.load("images/ui/main_menu.png")
+
+    def main_loop(self):
+        main_menu_loop_run = True
+        while main_menu_loop_run:  # Сцена меню
+            self.process_logic()
+            if self.check_event() == 1:
+                main_menu_loop_run = False
+            self.process_drawing()
+
+            pygame.display.flip()
+            pygame.time.wait(10)
 
     def process_logic(self):
         for button in self.__buttons:
@@ -98,6 +114,16 @@ class StartMenu:
     """
     Работа с картами
     """
+
+    def get_map_data(self):
+        map_data = []
+        with open("maps/{}/map_config.txt".format(self.maps[self.__map_num].name), 'r') as f:
+            for line in f:
+                line_data = []
+                for i in range(28):
+                    line_data.append(line[i])
+                map_data.append(line_data)
+        return map_data, pygame.image.load("maps/{}/map_img.png".format(self.maps[self.__map_num].name))
 
     def load_maps(self):
         files = os.listdir('maps')
