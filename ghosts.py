@@ -11,7 +11,7 @@ class MovingObject:
 
 class Ghost1(MovingObject):
     def ___init__(self, x=0, y=0):
-        super.__init__(x, y)
+        super().__init__(x, y)
         self.image = pygame.image.load("")
         self.rect = self.image.get_rect()
 
@@ -24,7 +24,7 @@ class Ghost1(MovingObject):
 
 class Ghost2(MovingObject):
     def ___init__(self, x=0, y=0):
-        super.__init__(x, y)
+        super().__init__(x, y)
         self.image = pygame.image.load("")
         self.rect = self.image.get_rect()
 
@@ -37,7 +37,7 @@ class Ghost2(MovingObject):
 
 class Ghost3(MovingObject):
     def ___init__(self, x=0, y=0):
-        super.__init__(x, y)
+        super().__init__(x, y)
         self.image = pygame.image.load("")
         self.rect = self.image.get_rect()
 
@@ -50,7 +50,7 @@ class Ghost3(MovingObject):
 
 class Ghost4(MovingObject):
     def ___init__(self, x=0, y=0):
-        super.__init__(x, y)
+        super().__init__(x, y)
         self.image = pygame.image.load("")
         self.rect = self.image.get_rect()
 
