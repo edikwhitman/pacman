@@ -69,7 +69,8 @@ class Game:
         pass
 
     # Обработка ивентов
-    def __check_event(self):
+    @staticmethod
+    def __check_event():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -108,5 +109,5 @@ class Game:
 
         # установка остальных необходимых значений
 
-        def get_score(self):
-            return self.score
+#    def get_score(self): На будущее
+#        return self.score

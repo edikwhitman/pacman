@@ -5,7 +5,7 @@ from button import Button
 from config import WIDTH, BLUE, BLACK, WHITE
 
 
-#-------------------------------------------------------- Map
+# -------------------------------------------------------- Map
 class Map:
     def __init__(self, name):
         self.name = name
@@ -37,7 +37,7 @@ class Map:
         # print('written to file ', self.scores)
 
 
-#-------------------------------------------------------- ScoresMenu
+# -------------------------------------------------------- ScoresMenu
 class ScoresMenu:
     def __init__(self):
         self.__buttons = []
@@ -98,13 +98,13 @@ class ScoresMenu:
         for button in self.__buttons:  # отрисовка кнопок
             button.draw(screen)
 
-        text = self.__font.render(map_.name, True, BLUE) # отрисовка названия карты
+        text = self.__font.render(map_.name, True, BLUE)  # отрисовка названия карты
         text_rect = text.get_rect(center=(WIDTH / 2, 60))
         screen.blit(text, text_rect)
 
         if map_.amount_of_scores == 0:
             text = self.__font.render('no scores', True, WHITE)
-            screen.blit(text, (130,140))
+            screen.blit(text, (130, 140))
         else:
             j = 1
             for i in map_.scores:
@@ -115,8 +115,7 @@ class ScoresMenu:
                 j += 1
 
 
-
-#-------------------------------------------------------- StartMenu
+# -------------------------------------------------------- StartMenu
 class StartMenu:
     def __init__(self, screen):
         self.screen = screen

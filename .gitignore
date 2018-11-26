@@ -1,6 +1,8 @@
+*highscores.txt
 *tmp.*
 
 ### VisualStudioCode ###
+.vscode
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
