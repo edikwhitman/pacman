@@ -14,8 +14,8 @@ class Game:
         self.fruit_spawn = None
         # self.image_pac = pygame.image.load('images/entity/pacman_stand.png')
         # self.pac1 = Character(координаты, self.pac, ширина, высота)
-        self.grain_img = pygame.image.load('images/entity/grain.png')
-        self.big_grain_img = pygame.image.load('images/entity/grain_big.png')
+        self.grain_img = pygame.image.load('images/entity/grains/grain.png')
+        self.big_grain_img = pygame.image.load('images/entity/grains/grain_big.png')
         self.map = []  # карта в виде символов (31 строка по 28 символов):
         # 0 - стена
         # 1 - малое зерно
@@ -69,7 +69,8 @@ class Game:
         pass
 
     # Обработка ивентов
-    def __check_event(self):
+    @staticmethod
+    def __check_event():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -107,3 +108,6 @@ class Game:
             print('Error: No fruit spawn point in map config file')
 
         # установка остальных необходимых значений
+
+#    def get_score(self): На будущее
+#        return self.score

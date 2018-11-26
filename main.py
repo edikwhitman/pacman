@@ -13,9 +13,6 @@ def main():
     menu = StartMenu(screen)
     game = Game(screen)
 
-    menu.load_maps()
-    # Выгрузка рекордов всех карт
-
     while True:
         menu.main_loop()  # Основной цикл меню
 

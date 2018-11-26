@@ -8,13 +8,13 @@ class Pacman(AnimatedCharacter):
 
     def set_eat_animation(self):
         self.animation_status = 0
-        self.set_animation("./images/entity/pacman_eat.png", 4)
+        self.set_animation("./images/entity/pacman/pacman_eat.png", 4)
 
     def set_death_animation(self):
         if not self.animation_status == 1:
             self.animation_status = 1
-            self.set_animation("./images/entity/pacman_death.png", 11, False, 3)
+            self.set_animation("./images/entity/pacman/pacman_death.png", 11, 3, False)
 
     def set_stand_animation(self):
         self.animation_status = 2
-        self.set_animation("./images/entity/pacman_stand.png", 1)
+        self.set_animation("./images/entity/pacman/pacman_stand.png", 1)
