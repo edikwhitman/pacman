@@ -11,7 +11,7 @@ class Game:
         self.pacman_start_spawn = None
         self.fruit_spawn = None
         # self.image_pac = pygame.image.load('images/entity/pacman_stand.png')
-        self.pacman = Pacman(0, 0, 32, 32, 3)
+        self.pacman = Pacman(0, 0, 32, 32, 3, 3)
         self.grain_img = pygame.image.load('images/entity/grain.png')
         self.big_grain_img = pygame.image.load('images/entity/grain_big.png')
         self.map = []  # карта в виде символов (31 строка по 28 символов):
@@ -26,83 +26,21 @@ class Game:
         # 8 - пустая клетка
         self.score = 0
 
-        self.hsp = 0  # Горизонтальная скорость
-        self.vsp = 0  # Вертикальная скорость
-        self.spd = 3  # Абсолютная скорость
-
     def main_loop(self):
         self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
         print('game loop run')
         game_loop_run = True
-        while game_loop_run:  # Сцена меню
-            self.__process_logic()
+        while game_loop_run:
             if self.__check_event() == 1:
                 game_loop_run = False
             self.__process_drawing()
 
-            #pygame.draw.circle(self.screen, (0, 255, 0), ((self.pacman.x + 16) // 16 * 16, (self.pacman.y + 44) // 16 * 16), 1)
-
-            self.pacman.set_eat_animation()
-
-            if self.pacman.movement_direction_queue == 3 and self.map[(self.pacman.y + 16 - 48) // 16][(self.pacman.x -2) // 16] != "0":
-                self.pacman.movement_direction = 3
-                self.pacman.movement_direction_queue = 0
-                self.pacman.set_x(self.pacman.x - 3)
-
-            elif self.pacman.movement_direction_queue == 4 and self.map[(self.pacman.y + 16 - 48) // 16][(self.pacman.x + 34) // 16] != "0":
-                self.pacman.movement_direction = 4
-                self.pacman.movement_direction_queue = 0
-                self.pacman.set_x(self.pacman.x + 3)
-
-            elif self.pacman.movement_direction_queue == 1 and self.map[(self.pacman.y - 44) // 16][(self.pacman.x + 16) // 16] != "0":
-                self.pacman.movement_direction = 1
-                self.pacman.movement_direction_queue = 0
-                self.pacman.set_y(self.pacman.y + 3)
-
-            elif self.pacman.movement_direction_queue == 2 and self.map[(self.pacman.y-10) // 16][(self.pacman.x + 16) // 16] != "0":
-                self.pacman.movement_direction = 2
-                self.pacman.movement_direction_queue = 0
-                self.pacman.set_y(self.pacman.y - 3)
-
-            # --------------------COLLISION---------------------
-            if self.pacman.movement_direction == 3 and self.map[(self.pacman.y + 16 - 48) // 16][(self.pacman.x + 6) // 16] != "0":
-                self.pacman.set_rotation(270)  # Поворот изображения до 270
-                self.pacman.set_y((self.pacman.y) // 16 * 16 + 8)
-                self.vsp = 0
-                self.hsp = -self.spd
-            elif self.pacman.movement_direction == 4 and self.map[(self.pacman.y + 16 - 48) // 16][(self.pacman.x + 26) // 16] != "0":
-                self.pacman.set_rotation(90)  # Поворот изображения до 90
-                self.pacman.set_y((self.pacman.y) // 16 * 16 + 8)
-                self.vsp = 0
-                self.hsp = self.spd
-            elif self.pacman.movement_direction == 1 and self.map[(self.pacman.y - 42) // 16][(self.pacman.x + 16) // 16] != "0":
-                self.pacman.set_rotation(0)  # Поворот изображения до 0
-                self.pacman.set_x((self.pacman.x) // 16 * 16 + 8)
-                self.vsp = -self.spd
-                self.hsp = 0
-            elif self.pacman.movement_direction == 2 and self.map[(self.pacman.y - 22) // 16][(self.pacman.x + 16) // 16] != "0":
-                self.pacman.set_rotation(180)  # Поворот изображения до 180
-                self.pacman.set_x((self.pacman.x) // 16 * 16 + 8)
-                self.vsp = self.spd
-                self.hsp = 0
-            else:
-                print("Collision")
-                self.hsp = 0
-                self.vsp = 0
-                self.pacman.set_stand_animation()
-
-
-
-            print((self.pacman.x) // 16, (self.pacman.y - 8) // 16, self.map[(self.pacman.y - 16) // 16][self.pacman.x // 16])
-
-
+            self.pacman.move(self.map)
 
             pygame.display.flip()
             pygame.time.wait(10)
         print('game loop stop')
 
-    def __process_logic(self):
-        self.pacman.set_position(self.pacman.x + self.hsp, self.pacman.y + self.vsp)  # Изменение координат пакмана
 
     # Отрисовка не статичных объектов (кнопки)
     def __process_drawing(self):
@@ -115,7 +53,6 @@ class Game:
         # 2. зерна и фрукты
         for i in range(31):
             for j in range(28):
-                #pygame.draw.circle(self.screen, (255, 0, 0),  (j * 16, i * 16 + 48), 1) #  ------------------------------Отладка------------------------------
                 if self.map[i][j] == '1':
                     self.screen.blit(self.grain_img, (j * 16, (i * 16) + 48))
                 elif self.map[i][j] == '3':
@@ -136,19 +73,7 @@ class Game:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_v:  # Показать анимацию смерти пакмана
-                    self.hsp = 0
-                    self.vsp = 0
-                    self.pacman.set_death_animation()
-                elif event.key == pygame.K_w or event.key == pygame.K_UP:  # Идти вверх
-                    self.pacman.movement_direction_queue = 1
-                elif event.key == pygame.K_a or event.key == pygame.K_LEFT:  # Идти влево
-                    self.pacman.movement_direction_queue = 3
-                elif event.key == pygame.K_s or event.key == pygame.K_DOWN:  # Идти вниз
-                    self.pacman.movement_direction_queue = 2
-                elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:  # Идти вправо
-                    self.pacman.movement_direction_queue = 4
+            self.pacman.check_event(event)
 
     def __reset_grains(self):
         for i in range(31):
