@@ -49,6 +49,7 @@ class Game:
 
     def __process_logic(self):
         self.pacman.move(self.map)
+        self.check_eaten_grains()
         if self.counter % 10 == 0:  # Типа таймера, чтобы мигали не сильно часто
             if self.big_grain_draw:
                 self.big_grain_draw = False
@@ -126,5 +127,15 @@ class Game:
 #    def get_score(self): На будущее
 #        return self.score
 
-    def get_pacman_cell(self):  # Возвращает клетку, в которой находится пакман сейчас в виде строка, колонка
-        return (self.pacman.y-40) // 16, (self.pacman.x+16) // 16
+    def get_pacman_cell(self):  # Возвращает клетку, в которой находится пакман сейчас в виде колонка, строка
+        return (self.pacman.x+16) // 16, (self.pacman.y-40) // 16
+
+    def check_eaten_grains(self):
+        for i in range(31):
+            for j in range(28):
+                char = self.map[i][j]
+                if (char == '1' or char == '3') and self.get_pacman_cell()[0] == j and self.get_pacman_cell()[1] == i:
+                    if char == '1':
+                        self.map[i][j] = '2'
+                    elif char == '3':
+                        self.map[i][j] = '4'
