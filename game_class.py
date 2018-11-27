@@ -2,6 +2,7 @@ import pygame
 import sys
 from pacman import Pacman
 from config import BLACK
+from ghosts import Blinky, Pinky, Inky, Clyde
 
 
 class Game:
@@ -11,6 +12,11 @@ class Game:
         self.pacman_start_spawn = None
         self.fruit_spawn = None
         self.pacman = Pacman(0, 0, 32, 32, 3, 3)
+        self.ghosts = list()
+        self.ghosts.append(Blinky(13*16, 11*16 + 48 - 8))
+        self.ghosts.append(Pinky(13*16, 14*16 + 48 - 8))
+        self.ghosts.append(Inky(11*16, 14*16 + 48 - 8))
+        self.ghosts.append(Clyde(15*16, 14*16 + 48 - 8))
         self.grain_img = pygame.image.load('images/entity/grains/grain.png')
         self.big_grain_img = pygame.image.load('images/entity/grains/grain_big.png')
         self.big_grain_draw = True  # Отображаем большое зерно или нет. Чтобы мигание делать
@@ -72,8 +78,8 @@ class Game:
         self.pacman.draw(self.screen)
 
         # 4. ghosts
-        # for ghost in self.ghosts:
-        #     ghost.draw()git
+        for ghost in self.ghosts:
+            ghost.draw(self.screen)
         # 5. scores
         #
 
