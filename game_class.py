@@ -126,5 +126,5 @@ class Game:
 #    def get_score(self): На будущее
 #        return self.score
 
-    def get_pacman_cell(self):
+    def get_pacman_cell(self):  # Возвращает клетку, в которой находится пакман сейчас в виде строка, колонка
         return (self.pacman.y-40) // 16, (self.pacman.x+16) // 16
