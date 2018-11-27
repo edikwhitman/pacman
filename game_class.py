@@ -26,6 +26,9 @@ class Game:
         # 8 - пустая клетка
         self.score = 0
 
+        self.big_grain_draw = True  # Отображаем большое зерно или нет. Чтобы мигание делать
+        self.counter = 1  # Счетчик прохода по game_loop, нужен как таймер
+
     def main_loop(self):
         self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
         print('game loop run')
@@ -34,15 +37,22 @@ class Game:
             if self.__check_event() == 1:
                 game_loop_run = False
             self.__process_drawing()
-
-            self.pacman.move(self.map)
+            self.__process_logic()
 
             pygame.display.flip()
             pygame.time.wait(10)
         print('game loop stop')
 
+    def __process_logic(self):
+        self.pacman.move(self.map)
+        if self.counter % 10 == 0:  # Костыль типа таймера, чтобы мигали не сильно часто
+            if self.big_grain_draw:
+                self.big_grain_draw = False
+            else:
+                self.big_grain_draw = True
+        self.counter += 1
 
-    # Отрисовка не статичных объектов (кнопки)
+    # Отрисовка не статичных объектов
     def __process_drawing(self):
         self.screen.fill(BLACK)
         # Очередь отрисовки:
@@ -55,7 +65,7 @@ class Game:
             for j in range(28):
                 if self.map[i][j] == '1':
                     self.screen.blit(self.grain_img, (j * 16, (i * 16) + 48))
-                elif self.map[i][j] == '3':
+                elif self.map[i][j] == '3' and self.big_grain_draw:
                     self.screen.blit(self.big_grain_img, (j * 16, (i * 16) + 48))
 
         # 3. pac man

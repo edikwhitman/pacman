@@ -35,22 +35,22 @@ class Pacman(AnimatedCharacter):
     def check_collision(self, map):  # Проверка на столкновение со стенами
         if self.movement_direction == 3 and map[(self.y + 16 - 48) // 16][(self.x + 6) // 16] != "0":
             self.set_rotation(270)  # Поворот изображения до 270
-            self.set_y((self.y) // 16 * 16 + 8)
+            self.set_y(self.y // 16 * 16 + 8)
             self.vertical_speed = 0
             self.horisontal_speed = -self.absolute_speed
         elif self.movement_direction == 4 and map[(self.y + 16 - 48) // 16][(self.x + 26) // 16] != "0":
             self.set_rotation(90)  # Поворот изображения до 90
-            self.set_y((self.y) // 16 * 16 + 8)
+            self.set_y(self.y // 16 * 16 + 8)
             self.vertical_speed = 0
             self.horisontal_speed = self.absolute_speed
         elif self.movement_direction == 1 and map[(self.y - 42) // 16][(self.x + 16) // 16] != "0":
             self.set_rotation(0)  # Поворот изображения до 0
-            self.set_x((self.x) // 16 * 16 + 8)
+            self.set_x(self.x // 16 * 16 + 8)
             self.vertical_speed = -self.absolute_speed
             self.horisontal_speed = 0
         elif self.movement_direction == 2 and map[(self.y - 22) // 16][(self.x + 16) // 16] != "0":
             self.set_rotation(180)  # Поворот изображения до 180
-            self.set_x((self.x) // 16 * 16 + 8)
+            self.set_x(self.x // 16 * 16 + 8)
             self.vertical_speed = self.absolute_speed
             self.horisontal_speed = 0
         else:
