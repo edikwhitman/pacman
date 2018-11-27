@@ -44,12 +44,14 @@ class Game:
 
     def __process_logic(self):
         self.pacman.move(self.map)
-        if self.counter % 10 == 0:  # Костыль типа таймера, чтобы мигали не сильно часто
+        if self.counter % 10 == 0:  # Типа таймера, чтобы мигали не сильно часто
             if self.big_grain_draw:
                 self.big_grain_draw = False
             else:
                 self.big_grain_draw = True
         self.counter += 1
+        if self.counter == 100:
+            self.counter = 0
 
     # Отрисовка не статичных объектов
     def __process_drawing(self):
