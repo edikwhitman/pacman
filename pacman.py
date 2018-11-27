@@ -100,5 +100,5 @@ class Pacman(AnimatedCharacter):
 
     def set_stand_animation(self):
         self.animation_status = 2
-        self.set_animation("./images/entity/pacman/pacman_stand.png", 4)
+        self.set_animation("./images/entity/pacman/pacman_stand.png", 1)
 
