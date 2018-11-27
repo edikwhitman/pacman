@@ -1,7 +1,9 @@
-highscores.txt
+*highscores.txt
 *tmp.*
 
 ### VisualStudioCode ###
+=======
+.vscode
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -293,3 +295,4 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/linux,macos,python,windows,pycharm+all
+.vscode/settings.json
