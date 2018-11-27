@@ -16,6 +16,7 @@ class Map:
     
     # Выгрузка рекордов из файла в память
     def load_scores(self):
+        open('maps/{}/highscores.txt'.format(self.name), 'a').close()  # Создает файл, если его нет
         with open('maps/{}/highscores.txt'.format(self.name), 'r') as f:
             for line in f:
                 self.scores.append(int(line))
@@ -126,7 +127,7 @@ class StartMenu:
         self.__buttons = []
         self.__scores_buttons = []
         self.__font = pygame.font.Font('font.ttf', 40)
-        self.__load_maps() # Выгрузка рекордов всех карт
+        self.__load_maps()  # Выгрузка рекордов всех карт
         self.scores_menu = ScoresMenu()
 
         # Start button

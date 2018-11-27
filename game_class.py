@@ -1,9 +1,7 @@
 import pygame
 import sys
-import os
-from character import Character
-from button import Button
-from config import WIDTH, BLUE
+from pacman import Pacman
+from config import BLACK
 
 
 class Game:
@@ -12,10 +10,12 @@ class Game:
         self.map_img = 0
         self.pacman_start_spawn = None
         self.fruit_spawn = None
-        # self.image_pac = pygame.image.load('images/entity/pacman_stand.png')
-        # self.pac1 = Character(координаты, self.pac, ширина, высота)
+
+        self.pacman = Pacman(0, 0, 32, 32, 3, 3)
         self.grain_img = pygame.image.load('images/entity/grains/grain.png')
         self.big_grain_img = pygame.image.load('images/entity/grains/grain_big.png')
+        self.big_grain_draw = True  # Отображаем большое зерно или нет. Чтобы мигание делать
+        self.counter = 1  # Счетчик прохода по game_loop, нужен как таймер
         self.map = []  # карта в виде символов (31 строка по 28 символов):
         # 0 - стена
         # 1 - малое зерно
@@ -26,25 +26,34 @@ class Game:
         # 6 - съеденная вишенка
         # 7 - одна из 18 клеток комнаты спавна приведений
         # 8 - пустая клетка
+        self.score = 0
 
     def main_loop(self):
+        self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
         print('game loop run')
         game_loop_run = True
-        while game_loop_run:  # Сцена меню
-            self.__process_logic()
+        while game_loop_run:
             if self.__check_event() == 1:
                 game_loop_run = False
             self.__process_drawing()
+            self.__process_logic()
 
             pygame.display.flip()
             pygame.time.wait(10)
         print('game loop stop')
 
     def __process_logic(self):
-        pass
+        self.pacman.move(self.map)
+        if self.counter % 10 == 0:  # Костыль типа таймера, чтобы мигали не сильно часто
+            if self.big_grain_draw:
+                self.big_grain_draw = False
+            else:
+                self.big_grain_draw = True
+        self.counter += 1
 
-    # Отрисовка не статичных объектов (кнопки)
+    # Отрисовка не статичных объектов
     def __process_drawing(self):
+        self.screen.fill(BLACK)
         # Очередь отрисовки:
 
         # 1. изображение карты map_img.png
@@ -55,26 +64,25 @@ class Game:
             for j in range(28):
                 if self.map[i][j] == '1':
                     self.screen.blit(self.grain_img, (j * 16, (i * 16) + 48))
-                elif self.map[i][j] == '3':
+                elif self.map[i][j] == '3' and self.big_grain_draw:
                     self.screen.blit(self.big_grain_img, (j * 16, (i * 16) + 48))
 
         # 3. pac man
-        # self.pac1.draw(screen)
+        self.pacman.draw(self.screen)
 
         # 4. ghosts
         # for ghost in self.ghosts:
         #     ghost.draw()git
         # 5. scores
         #
-        pass
 
     # Обработка ивентов
-    @staticmethod
-    def __check_event():
+    def __check_event(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            self.pacman.check_event(event)
 
     def __reset_grains(self):
         for i in range(31):
@@ -96,7 +104,7 @@ class Game:
             for j in range(28):
                 char = self.map[i][j]
                 if char == '9' and previous_char == '9':
-                    self.pacman_start_spawn = (j*16 - 8, i*16 + 48)
+                    self.pacman_start_spawn = (j*16 - 8 - 8, i*16 + 48 - 8)
                 elif char == '6' and previous_char == '6':
                     self.fruit_spawn = (j*16 - 8, i*16 + 48)
                 previous_char = self.map[i][j]
