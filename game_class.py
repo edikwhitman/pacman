@@ -76,7 +76,6 @@ class Game:
 
         # 3. pac man
         self.pacman.draw(self.screen)
-
         # 4. ghosts
         for ghost in self.ghosts:
             ghost.draw(self.screen)
@@ -111,7 +110,7 @@ class Game:
             for j in range(28):
                 char = self.map[i][j]
                 if char == '9' and previous_char == '9':
-                    self.pacman_start_spawn = (j*16 - 8 - 8, i*16 + 48 - 8)
+                    self.pacman_start_spawn = (j*16 - 16, i*16 + 40)
                 elif char == '6' and previous_char == '6':
                     self.fruit_spawn = (j*16 - 8, i*16 + 48)
                 previous_char = self.map[i][j]
@@ -126,3 +125,6 @@ class Game:
 
 #    def get_score(self): На будущее
 #        return self.score
+
+    def get_pacman_cell(self):
+        return (self.pacman.y-40) // 16, (self.pacman.x+16) // 16
