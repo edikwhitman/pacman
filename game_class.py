@@ -137,5 +137,6 @@ class Game:
                 if (char == '1' or char == '3') and self.get_pacman_cell()[0] == j and self.get_pacman_cell()[1] == i:
                     if char == '1':
                         self.map[i][j] = '2'
+                        self.score += 10
                     elif char == '3':
                         self.map[i][j] = '4'
