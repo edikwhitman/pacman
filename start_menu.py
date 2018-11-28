@@ -243,7 +243,7 @@ class StartMenu:
                 for i in range(28):
                     line_data.append(line[i])
                 map_data.append(line_data)
-        return map_data, pygame.image.load("maps/{}/map_img.png".format(self.maps[self.__map_num].name))
+        return map_data, pygame.image.load("maps/{}/map_img.png".format(self.maps[self.__map_num].name)), ''
 
     def __load_maps(self):
         files = os.listdir('maps')

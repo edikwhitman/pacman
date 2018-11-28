@@ -32,7 +32,7 @@ class Game:
         # 7 - одна из 18 клеток комнаты спавна приведений
         # 8 - пустая клетка
         self.score = 0
-        self.texture_pack = ''
+        self.texture_pack = ''  # Название текущего текстурпака
 
     def main_loop(self):
         self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
@@ -100,8 +100,8 @@ class Game:
                 elif self.map[i][j] == '4':
                     self.map[i][j] = '3'
 
-    def set_map(self, arguments):
-        self.map, self.map_img = arguments
+    def set_start_params(self, arguments):
+        self.map, self.map_img, self.texture_pack = arguments
         print('loaded')
 
         self.pacman_start_spawn = None
