@@ -115,6 +115,13 @@ class ScoresMenu:
                 screen.blit(text, text_rect)
                 j += 1
 
+# -------------------------------------------------------- Texturepack
+class Texturepack:
+    def __init__(self, name, preview_img):
+        self.name = name
+        self.preview_img = preview_img
+
+
 
 # -------------------------------------------------------- StartMenu
 class StartMenu:
