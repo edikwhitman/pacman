@@ -13,7 +13,7 @@ class Map:
         self.scores = []
         self.amount_of_scores = 0
         self.load_scores()
-    
+
     # Выгрузка рекордов из файла в память
     def load_scores(self):
         open('maps/{}/highscores.txt'.format(self.name), 'a').close()  # Создает файл, если его нет
@@ -38,6 +38,13 @@ class Map:
         # print('written to file ', self.scores)
 
 
+# -------------------------------------------------------- Texturepack
+class Texturepack:
+    def __init__(self, name):
+        self.name = name
+        self.preview_img = pygame.image.load("texturepacks/{}/preview.png".format(name))
+
+
 # -------------------------------------------------------- ScoresMenu
 class ScoresMenu:
     def __init__(self):
@@ -53,7 +60,7 @@ class ScoresMenu:
         # Exit button
         self.__buttons.append(
             Button(3, 40, 500, 63, 47, 'images/ui/button_back_static.png', 'images/ui/button_back_pressed.png'))
-        
+
     def check_events(self):
         response = None
         for event in pygame.event.get():
@@ -85,7 +92,7 @@ class ScoresMenu:
     def process_logic(self):
         for button in self.__buttons:
             button.logic(pygame.mouse.get_pos())
-    
+
     def __get_pressed_button(self):
         for button in self.__buttons:
             if button.get_status() == 1:
@@ -111,16 +118,9 @@ class ScoresMenu:
             for i in map_.scores:
                 # print('{}'.format(i))
                 text = self.__font.render('{}. {}'.format(j, i), True, WHITE)
-                text_rect = text.get_rect(center=(WIDTH / 2, 100 + j*35))
+                text_rect = text.get_rect(center=(WIDTH / 2, 100 + j * 35))
                 screen.blit(text, text_rect)
                 j += 1
-
-# -------------------------------------------------------- Texturepack
-class Texturepack:
-    def __init__(self, name, preview_img):
-        self.name = name
-        self.preview_img = preview_img
-
 
 
 # -------------------------------------------------------- StartMenu
