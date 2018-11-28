@@ -3,8 +3,9 @@ import pygame
 
 
 class Pacman(AnimatedCharacter):
-    def __init__(self, x, y, width, height, speed=3, time=1):
-        super().__init__(x, y, "./images/entity/pacman/pacman_eat.png", 4, width, height, True, time)
+    def __init__(self, x, y, width, height, speed=3, time=1,
+                 start_img_path="./texturepacks/Classic/pacman/pacman_eat.png"):
+        super().__init__(x, y, start_img_path, 4, width, height, True, time)
         self.movement_direction = 0  # 0 - стоит на месте, 1 - движется вверх, 2 - вниз, 3 - влево, 4 - вправов
         self.movement_direction_queue = 0  # 0 - стоит на месте, 1 - движется вверх, 2 - вниз, 3 - влево, 4 - вправов
         self.animation_status = 0  # 0 - есть, 1 - анимация смерти, 2 - стоять
@@ -12,6 +13,10 @@ class Pacman(AnimatedCharacter):
         self.horisontal_speed = 0
         self.absolute_speed = speed
         self.map = map
+
+        self.texture_stand = None
+        self.texture_eat = None
+        self.texture_death = None
 
     def change_direction(self, map):  # Проверка на возможность поворота
         self.set_eat_animation()
@@ -91,16 +96,16 @@ class Pacman(AnimatedCharacter):
     def set_eat_animation(self):
         if not self.animation_status == 0:
             self.animation_status = 0
-            self.set_animation("./images/entity/pacman/pacman_eat.png", 4, True, self.time * 3)
+            self.set_animation(self.texture_eat, 4, True, self.time * 3)
 
     def set_death_animation(self):
         if not self.animation_status == 1:
             self.animation_status = 1
-            self.set_animation("./images/entity/pacman/pacman_death.png", 11, False, self.time * 3)
+            self.set_animation(self.texture_death, 11, False, self.time * 3)
 
     def set_stand_animation(self):
         self.animation_status = 2
-        self.set_animation("./images/entity/pacman/pacman_stand.png", 1)
+        self.set_animation(self.texture_stand, 1)
 
     def get_pos(self):
         return self.x, self.y

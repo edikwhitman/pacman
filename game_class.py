@@ -11,14 +11,14 @@ class Game:
         self.map_img = 0
         self.pacman_start_spawn = None
         self.fruit_spawn = None
-        self.pacman = Pacman(0, 0, 32, 32, 3, 3)
+        self.pacman = None
         self.ghosts = list()
-        self.ghosts.append(Blinky(13*16, 11*16 + 48 - 8))
-        self.ghosts.append(Pinky(13*16, 14*16 + 48 - 8))
-        self.ghosts.append(Inky(11*16, 14*16 + 48 - 8))
-        self.ghosts.append(Clyde(15*16, 14*16 + 48 - 8))
-        self.grain_img = pygame.image.load('images/entity/grains/grain.png')
-        self.big_grain_img = pygame.image.load('images/entity/grains/grain_big.png')
+        self.ghosts.append(Blinky(13 * 16, 11 * 16 + 48 - 8))
+        self.ghosts.append(Pinky(13 * 16, 14 * 16 + 48 - 8))
+        self.ghosts.append(Inky(11 * 16, 14 * 16 + 48 - 8))
+        self.ghosts.append(Clyde(15 * 16, 14 * 16 + 48 - 8))
+        self.grain_img = None
+        self.big_grain_img = None
         self.big_grain_draw = True  # Отображаем большое зерно или нет. Чтобы мигание делать
         self.counter = 1  # Счетчик прохода по game_loop, нужен как таймер
         self.map = []  # карта в виде символов (31 строка по 28 символов):
@@ -32,10 +32,9 @@ class Game:
         # 7 - одна из 18 клеток комнаты спавна приведений
         # 8 - пустая клетка
         self.score = 0
-        self.texture_pack = ''  # Название текущего текстурпака
+        self.texture_pack = None  # Название текущего текстурпака
 
     def main_loop(self):
-        self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
         print('game loop run')
         game_loop_run = True
         while game_loop_run:
@@ -104,6 +103,9 @@ class Game:
         self.map, self.map_img, self.texture_pack = arguments
         print('loaded')
 
+        self.pacman = Pacman(0, 0, 32, 32, 3, 3,
+                             start_img_path='texturepacks/{}/pacman/pacman_stand.png'.format(self.texture_pack))
+
         self.pacman_start_spawn = None
         self.fruit_spawn = None
         # Установка точки спавна PacMan'а и других необходимых элементов
@@ -112,9 +114,9 @@ class Game:
             for j in range(28):
                 char = self.map[i][j]
                 if char == '9' and previous_char == '9':
-                    self.pacman_start_spawn = (j*16 - 16, i*16 + 40)
+                    self.pacman_start_spawn = (j * 16 - 16, i * 16 + 40)
                 elif char == '6' and previous_char == '6':
-                    self.fruit_spawn = (j*16 - 8, i*16 + 48)
+                    self.fruit_spawn = (j * 16 - 8, i * 16 + 48)
                 previous_char = self.map[i][j]
             previous_char = None
 
@@ -123,13 +125,18 @@ class Game:
         if self.fruit_spawn is None:
             print('Error: No fruit spawn point in map config file')
 
+        # Установка текстурок из текстурпака
+        self.__set_textures()
+        # Установка стартовой позиции пакмана
+        self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
+
         # установка остальных необходимых значений
 
-#    def get_score(self): На будущее
-#        return self.score
+    #    def get_score(self): На будущее
+    #        return self.score
 
     def get_pacman_cell(self):  # Возвращает клетку, в которой находится пакман сейчас в виде колонка, строка
-        return (self.pacman.x+16) // 16, (self.pacman.y-40) // 16
+        return (self.pacman.x + 16) // 16, (self.pacman.y - 40) // 16
 
     def check_eaten_grains(self):
         for i in range(31):
@@ -141,3 +148,12 @@ class Game:
                         self.score += 10
                     elif char == '3':
                         self.map[i][j] = '4'
+
+    def __set_textures(self):
+        # grains
+        self.grain_img = pygame.image.load('texturepacks/{}/grains/grain.png'.format(self.texture_pack))
+        self.big_grain_img = pygame.image.load('texturepacks/{}/grains/grain_big.png'.format(self.texture_pack))
+        # pacman
+        self.pacman.texture_stand = 'texturepacks/{}/pacman/pacman_stand.png'.format(self.texture_pack)
+        self.pacman.texture_death = 'texturepacks/{}/pacman/pacman_death.png'.format(self.texture_pack)
+        self.pacman.texture_eat = 'texturepacks/{}/pacman/pacman_eat.png'.format(self.texture_pack)

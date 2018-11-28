@@ -142,16 +142,20 @@ class StartMenu:
             Button(1, 46, 350, 356, 71, 'images/ui/button_start_static.png', 'images/ui/button_start_pressed.png'))
         # Scores button
         self.__buttons.append(
-            Button(2, 46, 450, 166, 47, 'images/ui/button_scores_static.png', 'images/ui/button_scores_pressed.png'))
+            Button(2, 46, 450, 110, 47, 'images/ui/button_scores_static.png', 'images/ui/button_scores_pressed.png'))
         # Exit button
         self.__buttons.append(
-            Button(3, 236, 450, 166, 47, 'images/ui/button_exit_static.png', 'images/ui/button_exit_pressed.png'))
+            Button(3, 292, 450, 110, 47, 'images/ui/button_exit_static.png', 'images/ui/button_exit_pressed.png'))
         # Left arrow
         self.__buttons.append(
             Button(4, 100, 230, 31, 51, 'images/ui/arrow_left_static.png', 'images/ui/arrow_left_pressed.png'))
         # Right arrow
         self.__buttons.append(
             Button(5, 320, 230, 31, 51, 'images/ui/arrow_right_static.png', 'images/ui/arrow_right_pressed.png'))
+        # textures settings
+        self.__buttons.append(
+            Button(6, 169, 450, 110, 47, 'images/ui/button_settings_static.png',
+                   'images/ui/button_settings_pressed.png'))
         # open('highscores.txt', 'a').close()  # Создает файл, если его нет (пока не надо)
         self.start_menu_image = pygame.image.load("images/ui/main_menu.png")
 
@@ -250,7 +254,7 @@ class StartMenu:
                 for i in range(28):
                     line_data.append(line[i])
                 map_data.append(line_data)
-        return map_data, pygame.image.load("maps/{}/map_img.png".format(self.maps[self.__map_num].name)), ''
+        return map_data, pygame.image.load("maps/{}/map_img.png".format(self.maps[self.__map_num].name)), 'Classic'
 
     def __load_maps(self):
         files = os.listdir('maps')
