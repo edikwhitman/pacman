@@ -59,7 +59,7 @@ class ScoresMenu:
             Button(2, 380, 35, 31, 51, 'images/ui/arrow_right_static.png', 'images/ui/arrow_right_pressed.png'))
         # Exit button
         self.__buttons.append(
-            Button(3, 40, 500, 63, 47, 'images/ui/button_back_static.png', 'images/ui/button_back_pressed.png'))
+            Button(3, 170, 480, 110, 47, 'images/ui/button_back_static.png', 'images/ui/button_back_pressed.png'))
 
     def check_events(self):
         response = None
@@ -118,7 +118,7 @@ class ScoresMenu:
             for i in map_.scores:
                 # print('{}'.format(i))
                 text = self.__font.render('{}. {}'.format(j, i), True, WHITE)
-                text_rect = text.get_rect(center=(WIDTH / 2, 100 + j * 35))
+                text_rect = text.get_rect(center=(WIDTH / 2, 80 + j * 35))
                 screen.blit(text, text_rect)
                 j += 1
 
