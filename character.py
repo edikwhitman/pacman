@@ -58,6 +58,7 @@ class AnimatedCharacter(Character):  # Анимированный персона
                  time=1):  # img_src - изображение с набором спрайтов (без отступов, в один ряд), sprites_cnt -
         # количество спрайтов, loop - зацикливание анимации, time - время анимации
         super().__init__(x, y, img_src, width, height)
+        self.original_time = time
         self.set_animation(img_src, sprites_cnt, loop, time)
         self.object = self.sprites[0]
         self.object_rect = self.sprites[0].get_rect()
@@ -105,6 +106,11 @@ class AnimatedCharacter(Character):  # Анимированный персона
     def set_split_sprites_range(self, first_sprite, last_sprite):  # Задать диапазон для разделения спрайтов
         self.sprites_cnt = last_sprite - first_sprite - 1
         self.sprites = self.split_sprites(self.img_src, self.sprites_cnt, first_sprite - 1, last_sprite)
+
+    def get_image_parts(self, img_src):
+        height = pygame.image.load(img_src).get_rect().height
+        width = pygame.image.load(img_src).get_rect().width
+        return width // height
 
     def draw(self, screen, upd_time=1):  # Вывод на экран
         if not self.end:
