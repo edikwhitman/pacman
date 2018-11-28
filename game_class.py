@@ -32,6 +32,7 @@ class Game:
         # 7 - одна из 18 клеток комнаты спавна приведений
         # 8 - пустая клетка
         self.score = 0
+        self.texture_pack = ''
 
     def main_loop(self):
         self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
