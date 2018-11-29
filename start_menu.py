@@ -140,6 +140,7 @@ class StartMenu:
         self.__scores_buttons = []
         self.__font = pygame.font.Font('font.ttf', 40)
         self.__load_maps()  # Выгрузка рекордов всех карт
+        # self.__load_texturepacks() # Подгрузка текстурпаков
         self.scores_menu = ScoresMenu()
 
         # Start button
@@ -266,6 +267,12 @@ class StartMenu:
         for map_ in files:
             self.maps.append(Map(map_))
         self.__number_of_maps = len(self.maps)
+
+    def __load_texturepacks(self):  # Подгрузка текстурпаков
+        files = os.listdir('texturepacks')
+        for texturepack in files:
+            self.texturepacks.append(Texturepack(texturepack))
+        self.__number_of_texturepacks = len(self.texturepacks)
 
     def __switch_map(self, num):
         self.__map_num = (self.__map_num + num) % self.__number_of_maps
