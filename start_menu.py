@@ -39,6 +39,17 @@ class Map:
                 f.write('{}\n'.format(i))
         # print('written to file ', self.scores)
 
+    def reload_data(self):
+        with open("maps/{}/map_config.txt".format(self.name), 'r') as f:
+            for line in f:
+                line_data = []
+                for i in range(28):
+                    line_data.append(line[i])
+                self.data.append(line_data)
+
+    def load_img(self):
+        self.img = pygame.image.load("maps/{}/map_img.png".format(self.name))
+
 
 # -------------------------------------------------------- Texturepack
 class Texturepack:
@@ -257,15 +268,9 @@ class StartMenu:
     Работа с картами
     """
 
-    def get_texturepack(self):  # Подготавливает map и texturepack и возвращает их
-        self.maps[self.__map_num].data = []
-        with open("maps/{}/map_config.txt".format(self.maps[self.__map_num].name), 'r') as f:
-            for line in f:
-                line_data = []
-                for i in range(28):
-                    line_data.append(line[i])
-                self.maps[self.__map_num].data.append(line_data)
-        self.maps[self.__map_num].img = pygame.image.load("maps/{}/map_img.png".format(self.maps[self.__map_num].name))
+    def get_map_and_textures(self):  # Подготавливает map и texturepack и возвращает их
+        self.maps[self.__map_num].reload_data()
+        self.maps[self.__map_num].load_img()
         return self.maps[self.__map_num], self.texturepacks[self.__texturepack_num]
 
     def __load_maps(self):  # Выгрузка карт в память
