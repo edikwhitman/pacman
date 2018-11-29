@@ -131,6 +131,11 @@ class StartMenu:
         self.maps = []
         self.__number_of_maps = 0
         self.__map_num = 0
+
+        self.texturepacks = []             # Массив текстурпаков
+        self.__number_of_texturepacks = 0  # Сколько всего текстурпаков
+        self.__texturepack_num = 0         # Номер текущего текстурпака
+
         self.__buttons = []
         self.__scores_buttons = []
         self.__font = pygame.font.Font('font.ttf', 40)
