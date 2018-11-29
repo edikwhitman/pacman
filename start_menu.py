@@ -13,6 +13,8 @@ class Map:
         self.scores = []
         self.amount_of_scores = 0
         self.load_scores()
+        self.data = []
+        self.img = None
 
     # Выгрузка рекордов из файла в память
     def load_scores(self):
@@ -140,7 +142,7 @@ class StartMenu:
         self.__scores_buttons = []
         self.__font = pygame.font.Font('font.ttf', 40)
         self.__load_maps()  # Выгрузка рекордов всех карт
-        # self.__load_texturepacks() # Подгрузка текстурпаков
+        self.__load_texturepacks()  # Подгрузка текстурпаков
         self.scores_menu = ScoresMenu()
 
         # Start button
@@ -252,15 +254,16 @@ class StartMenu:
     Работа с картами
     """
 
-    def get_map_data(self):
-        map_data = []
+    def get_texturepack(self):  # Подготавливает map и texturepack и возвращает их
+        self.maps[self.__map_num].data = []
         with open("maps/{}/map_config.txt".format(self.maps[self.__map_num].name), 'r') as f:
             for line in f:
                 line_data = []
                 for i in range(28):
                     line_data.append(line[i])
-                map_data.append(line_data)
-        return map_data, pygame.image.load("maps/{}/map_img.png".format(self.maps[self.__map_num].name)), 'Classic'
+                self.maps[self.__map_num].data.append(line_data)
+        self.maps[self.__map_num].img = pygame.image.load("maps/{}/map_img.png".format(self.maps[self.__map_num].name))
+        return self.maps[self.__map_num], self.texturepacks[self.__texturepack_num]
 
     def __load_maps(self):
         files = os.listdir('maps')

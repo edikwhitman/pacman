@@ -8,7 +8,6 @@ from ghosts import Blinky, Pinky, Inky, Clyde
 class Game:
     def __init__(self, screen):
         self.screen = screen  # Плоскость отображения
-        self.map_img = 0
         self.pacman_start_spawn = None
         self.fruit_spawn = None
         self.pacman = None
@@ -21,7 +20,7 @@ class Game:
         self.big_grain_img = None
         self.big_grain_draw = True  # Отображаем большое зерно или нет. Чтобы мигание делать
         self.counter = 1  # Счетчик прохода по game_loop, нужен как таймер
-        self.map = []  # карта в виде символов (31 строка по 28 символов):
+        self.map = None  # Экземпляр класса карты, map.data - карта в виде символов (31 строка по 28 символов):
         # 0 - стена
         # 1 - малое зерно
         # 2 - съеденное малое зерно
@@ -32,7 +31,7 @@ class Game:
         # 7 - одна из 18 клеток комнаты спавна приведений
         # 8 - пустая клетка
         self.score = 0
-        self.texture_pack = None  # Название текущего текстурпака
+        self.texturepack = None  # Текущий текстурпак (экземпляр класса Texturepack)
 
     def main_loop(self):
         print('game loop run')
@@ -48,7 +47,7 @@ class Game:
         print('game loop stop')
 
     def __process_logic(self):
-        self.pacman.move(self.map)
+        self.pacman.move(self.map.data)
         self.check_eaten_grains()
         if self.counter % 10 == 0:  # Типа таймера, чтобы мигали не сильно часто
             if self.big_grain_draw:
@@ -65,14 +64,14 @@ class Game:
         # Очередь отрисовки:
 
         # 1. изображение карты map_img.png
-        self.screen.blit(self.map_img, (0, 48))
+        self.screen.blit(self.map.img, (0, 48))
 
         # 2. зерна и фрукты
         for i in range(31):
             for j in range(28):
-                if self.map[i][j] == '1':
+                if self.map.data[i][j] == '1':
                     self.screen.blit(self.grain_img, (j * 16, (i * 16) + 48))
-                elif self.map[i][j] == '3' and self.big_grain_draw:
+                elif self.map.data[i][j] == '3' and self.big_grain_draw:
                     self.screen.blit(self.big_grain_img, (j * 16, (i * 16) + 48))
 
         # 3. pac man
@@ -94,17 +93,17 @@ class Game:
     def __reset_grains(self):
         for i in range(31):
             for j in range(28):
-                if self.map[i][j] == '2':
-                    self.map[i][j] = '1'
-                elif self.map[i][j] == '4':
-                    self.map[i][j] = '3'
+                if self.map.data[i][j] == '2':
+                    self.map.data[i][j] = '1'
+                elif self.map.data[i][j] == '4':
+                    self.map.data[i][j] = '3'
 
     def set_start_params(self, arguments):
-        self.map, self.map_img, self.texture_pack = arguments
+        self.map, self.texturepack = arguments
         print('loaded')
 
         self.pacman = Pacman(0, 0, 32, 32, 3, 3,
-                             start_img_path='texturepacks/{}/pacman/pacman_stand.png'.format(self.texture_pack))
+                             start_img_path='texturepacks/{}/pacman/pacman_stand.png'.format(self.texturepack.name))
 
         self.pacman_start_spawn = None
         self.fruit_spawn = None
@@ -112,12 +111,12 @@ class Game:
         previous_char = None
         for i in range(31):
             for j in range(28):
-                char = self.map[i][j]
+                char = self.map.data[i][j]
                 if char == '9' and previous_char == '9':
                     self.pacman_start_spawn = (j * 16 - 16, i * 16 + 40)
                 elif char == '6' and previous_char == '6':
                     self.fruit_spawn = (j * 16 - 8, i * 16 + 48)
-                previous_char = self.map[i][j]
+                previous_char = self.map.data[i][j]
             previous_char = None
 
         if self.pacman_start_spawn is None:
@@ -132,28 +131,25 @@ class Game:
 
         # установка остальных необходимых значений
 
-    #    def get_score(self): На будущее
-    #        return self.score
-
     def get_pacman_cell(self):  # Возвращает клетку, в которой находится пакман сейчас в виде колонка, строка
         return (self.pacman.x + 16) // 16, (self.pacman.y - 40) // 16
 
     def check_eaten_grains(self):
         for i in range(31):
             for j in range(28):
-                char = self.map[i][j]
+                char = self.map.data[i][j]
                 if (char == '1' or char == '3') and self.get_pacman_cell()[0] == j and self.get_pacman_cell()[1] == i:
                     if char == '1':
-                        self.map[i][j] = '2'
+                        self.map.data[i][j] = '2'
                         self.score += 10
                     elif char == '3':
-                        self.map[i][j] = '4'
+                        self.map.data[i][j] = '4'
 
     def __set_textures(self):
         # grains
-        self.grain_img = pygame.image.load('texturepacks/{}/grains/grain.png'.format(self.texture_pack))
-        self.big_grain_img = pygame.image.load('texturepacks/{}/grains/grain_big.png'.format(self.texture_pack))
+        self.grain_img = pygame.image.load('texturepacks/{}/grains/grain.png'.format(self.texturepack.name))
+        self.big_grain_img = pygame.image.load('texturepacks/{}/grains/grain_big.png'.format(self.texturepack.name))
         # pacman
-        self.pacman.texture_stand = 'texturepacks/{}/pacman/pacman_stand.png'.format(self.texture_pack)
-        self.pacman.texture_death = 'texturepacks/{}/pacman/pacman_death.png'.format(self.texture_pack)
-        self.pacman.texture_eat = 'texturepacks/{}/pacman/pacman_eat.png'.format(self.texture_pack)
+        self.pacman.texture_stand = 'texturepacks/{}/pacman/pacman_stand.png'.format(self.texturepack.name)
+        self.pacman.texture_death = 'texturepacks/{}/pacman/pacman_death.png'.format(self.texturepack.name)
+        self.pacman.texture_eat = 'texturepacks/{}/pacman/pacman_eat.png'.format(self.texturepack.name)

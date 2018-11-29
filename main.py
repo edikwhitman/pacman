@@ -16,7 +16,7 @@ def main():
     while True:
         menu.main_loop()  # Основной цикл меню
 
-        game.set_start_params(menu.get_map_data())  # Получение карты для игры из класса menu
+        game.set_start_params(menu.get_texturepack())  # Получение карты для игры из класса menu
 
         game.main_loop()  # Основной цикл игры
 
