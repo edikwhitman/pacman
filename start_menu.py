@@ -93,11 +93,10 @@ class ScoresMenu:
         for button in self.__buttons:
             button.logic(pygame.mouse.get_pos())
 
-    def __get_pressed_button(self):
+    def __get_pressed_button(self):  # Возвращает id кнопки на которую нажали
         for button in self.__buttons:
             if button.get_status() == 1:
-                # print(button.index)
-                return button.index
+                return button.get_id()
         return None
 
     def process_drawing(self, screen, map_):
@@ -126,22 +125,30 @@ class ScoresMenu:
 # -------------------------------------------------------- StartMenu
 class StartMenu:
     def __init__(self, screen):
-        self.screen = screen
-        self.scores_menu_opened = False
-        self.maps = []
-        self.__number_of_maps = 0
-        self.__map_num = 0
+        self.screen = screen  # Плоскость отрисовки
 
-        self.texturepacks = []             # Массив текстурпаков
-        self.__number_of_texturepacks = 0  # Сколько всего текстурпаков
-        self.__texturepack_num = 0         # Номер текущего текстурпака
+        self.main_menu_loop_run = False  # Переменная работы основного цикла
+        self.scores_menu_opened = False  # True - Открыто меню рекордов; False - закрыто
+        self.textures_menu_opened = False  # True - Открыто меню текстурпаков; False - закрыто
 
-        self.__buttons = []
-        self.__scores_buttons = []
-        self.__font = pygame.font.Font('font.ttf', 40)
-        self.__load_maps()  # Выгрузка рекордов всех карт
-        # self.__load_texturepacks() # Подгрузка текстурпаков
-        self.scores_menu = ScoresMenu()
+        self.maps = []              # Массив карт
+        self.__number_of_maps = 0   # Сколько всего карт
+        self.__map_num = 0          # Номер текущей карты
+
+        self.texturepacks = []              # Массив текстурпаков
+        self.__number_of_texturepacks = 0   # Сколько всего текстурпаков
+        self.__texturepack_num = 0          # Номер текущего текстурпака
+
+        self.__buttons = []  # массив кнопок основного меню
+
+        self.__font = pygame.font.Font('font.ttf', 40)  # Шрифт
+
+        self.__load_maps()          # Выгрузка рекордов всех карт
+        self.__load_texturepacks()  # Выгрузка всех текстурпаков
+
+        self.scores_menu = ScoresMenu()  # Создание меню рекордов
+
+        self.start_menu_image = pygame.image.load("images/ui/main_menu.png")  # Фон основного меню
 
         # Start button
         self.__buttons.append(
@@ -152,28 +159,28 @@ class StartMenu:
         # Exit button
         self.__buttons.append(
             Button(3, 292, 450, 110, 47, 'images/ui/button_exit_static.png', 'images/ui/button_exit_pressed.png'))
-        # Left arrow
+        # Left arrow button
         self.__buttons.append(
             Button(4, 100, 230, 31, 51, 'images/ui/arrow_left_static.png', 'images/ui/arrow_left_pressed.png'))
-        # Right arrow
+        # Right arrow button
         self.__buttons.append(
             Button(5, 320, 230, 31, 51, 'images/ui/arrow_right_static.png', 'images/ui/arrow_right_pressed.png'))
-        # textures settings
+        # textures settings button
         self.__buttons.append(
             Button(6, 169, 450, 110, 47, 'images/ui/button_settings_static.png',
                    'images/ui/button_settings_pressed.png'))
-        # open('highscores.txt', 'a').close()  # Создает файл, если его нет (пока не надо)
-        self.start_menu_image = pygame.image.load("images/ui/main_menu.png")
 
     def main_loop(self):
-        main_menu_loop_run = True
-        while main_menu_loop_run:  # Сцена меню
-            if not self.scores_menu_opened:
+        self.main_menu_loop_run = True
+
+        while self.main_menu_loop_run:
+
+            if not self.scores_menu_opened:  # Сцена основного меню
                 self.process_logic()
-                if self.check_events() == 1:
-                    main_menu_loop_run = False
+                self.check_events()
                 self.process_drawing()
-            else:
+
+            else:  # Сцена меню рекордов
                 self.scores_menu.process_logic()
                 response = self.scores_menu.check_events()
                 if response == 1:
@@ -188,13 +195,12 @@ class StartMenu:
             pygame.time.wait(20)
 
     def process_logic(self):
+        # Логика кнопок
         for button in self.__buttons:
             button.logic(pygame.mouse.get_pos())
 
     # Отрисовка
     def process_drawing(self):
-        self.screen.fill(BLUE)
-
         self.screen.blit(self.maps[self.__map_num].preview_img, (168, 200))  # отрисовка превью картинки
 
         self.screen.blit(self.start_menu_image, (0, 0))  # отрисовка картинки менюшки
@@ -208,51 +214,51 @@ class StartMenu:
 
     # Обработка ивентов
     def check_events(self):
-        response = None
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
-                pressed_button = self.__get_pressed_button()
-                if pressed_button is not None:
+                pressed_button_id = self.__get_pressed_button()
+                if pressed_button_id is not None:
                     # Выход из игры
-                    if pressed_button == 3:
+                    if pressed_button_id == 3:
                         pygame.quit()
                         sys.exit()
                     # Вызов меню рекордов
-                    elif pressed_button == 2:
+                    elif pressed_button_id == 2:
                         self.scores_menu_opened = True
                     # Старт игры
-                    elif pressed_button == 1:
-                        response = 1
+                    elif pressed_button_id == 1:
+                        self.main_menu_loop_run = False
                     # Смена карты
-                    elif pressed_button == 4:
+                    elif pressed_button_id == 4:
                         self.__switch_map(-1)
-                    elif pressed_button == 5:
+                    elif pressed_button_id == 5:
                         self.__switch_map(1)
+                    # Вызов меню текстурпаков
+                    elif pressed_button_id == 6:
+                        self.textures_menu_opened = True
             elif event.type == pygame.KEYDOWN:
                 # Смена карты
                 if event.key == pygame.K_LEFT:
                     self.__switch_map(-1)
-                    self.__buttons[3].set_status(2)
+                    self.__buttons[3].set_pressed()
                 elif event.key == pygame.K_RIGHT:
                     self.__switch_map(1)
-                    self.__buttons[4].set_status(2)
+                    self.__buttons[4].set_pressed()
             elif event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-        return response
 
-    def __get_pressed_button(self):
+    def __get_pressed_button(self):  # Возвращает id кнопки на которую нажали
         for button in self.__buttons:
             if button.get_status() == 1:
-                # print(button.index)
-                return button.index
+                return button.get_id()
         return None
 
     """
     Работа с картами
     """
 
-    def get_map_data(self):
+    def get_map_data(self):  # Получение информации о карте (Для выгрузки в игру)
         map_data = []
         with open("maps/{}/map_config.txt".format(self.maps[self.__map_num].name), 'r') as f:
             for line in f:
@@ -262,20 +268,24 @@ class StartMenu:
                 map_data.append(line_data)
         return map_data, pygame.image.load("maps/{}/map_img.png".format(self.maps[self.__map_num].name)), 'Classic'
 
-    def __load_maps(self):
+    def __load_maps(self):  # Выгрузка карт в память
         files = os.listdir('maps')
         for map_ in files:
             self.maps.append(Map(map_))
         self.__number_of_maps = len(self.maps)
 
-    def __load_texturepacks(self):  # Подгрузка текстурпаков
+    def __switch_map(self, num):  # смена номера карты на num
+        self.__map_num = (self.__map_num + num) % self.__number_of_maps
+
+    """
+    Работа с текстурпаками
+    """
+
+    def __load_texturepacks(self):  # Выгрузка текстурпаков в память
         files = os.listdir('texturepacks')
         for texturepack in files:
             self.texturepacks.append(Texturepack(texturepack))
         self.__number_of_texturepacks = len(self.texturepacks)
 
-    def __switch_map(self, num):
-        self.__map_num = (self.__map_num + num) % self.__number_of_maps
-
-    def __switch_texturepack(self, num):  # Смена текстурпака
+    def __switch_texturepack(self, num):  # Cмена номера текстурапка на num
         self.__texturepack_num = (self.__texturepack_num + num) % self.__number_of_texturepacks
