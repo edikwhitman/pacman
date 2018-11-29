@@ -276,3 +276,6 @@ class StartMenu:
 
     def __switch_map(self, num):
         self.__map_num = (self.__map_num + num) % self.__number_of_maps
+
+    def __switch_texturepack(self, num):  # Смена текстурпака
+        self.__texturepack_num = (self.__texturepack_num + num) % self.__number_of_texturepacks
