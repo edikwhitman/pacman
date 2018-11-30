@@ -1,7 +1,7 @@
 import pygame
 import sys
 from pacman import Pacman
-from config import BLACK
+from config import BLACK, WHITE
 from ghosts import Blinky, Pinky, Inky, Clyde
 
 
@@ -38,12 +38,15 @@ class Game:
         game_loop_run = True
         while game_loop_run:
             if self.__check_event() == 1:
-                game_loop_run = False
+                game_loop_run = False   
             self.__process_drawing()
             self.__process_logic()
 
             pygame.display.flip()
             pygame.time.wait(10)
+        # После конца игры
+        self.map.add_new_score(self.score)
+        self.map.write_scores()
         print('game loop stop')
 
     def __process_logic(self):
@@ -80,7 +83,26 @@ class Game:
         for ghost in self.ghosts:
             ghost.draw(self.screen)
         # 5. scores
-        #
+        font = pygame.font.Font('font.ttf', 25)
+
+        up = font.render('1UP', True, WHITE)  # Надпись над текущим счетом
+        up_rect = up.get_rect(topleft=(16*2, 0))
+        self.screen.blit(up, up_rect)
+
+        score_now = font.render(str(self.score), True, WHITE)  # Текущий счет
+        sc_rect = score_now.get_rect(topleft=(16*3, 20))
+        self.screen.blit(score_now, sc_rect)
+
+        hs_txt = font.render('HIGH SCORE', True, WHITE)  # Надпись над наибольшим счетом
+        hs_txt_rect = hs_txt.get_rect(topleft=(16*9, 0))
+        self.screen.blit(hs_txt, hs_txt_rect)
+        if not self.map.scores:
+            hs = font.render(str(self.score), True, WHITE)  # Наибольший счет
+        else:
+            hs = font.render(str(self.map.scores[0]) if self.map.scores[0] > self.score else str(self.score),
+                             True, WHITE)  # Наибольший счет
+        hs_rect = hs.get_rect(topleft=(16*14, 20))
+        self.screen.blit(hs, hs_rect)
 
     # Обработка ивентов
     def __check_event(self):
@@ -130,6 +152,7 @@ class Game:
         self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
 
         # установка остальных необходимых значений
+        self.map.load_scores()
 
     def get_pacman_cell(self):  # Возвращает клетку, в которой находится пакман сейчас в виде колонка, строка
         return (self.pacman.x + 16) // 16, (self.pacman.y - 40) // 16
