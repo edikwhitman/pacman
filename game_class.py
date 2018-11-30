@@ -48,6 +48,8 @@ class Game:
 
     def __process_logic(self):
         self.pacman.move(self.map.data)
+        self.ghosts[0].move(self.map.data)
+        self.ghosts[0].set_chase_mode(self.map.data, self.get_pacman_cell())
         self.check_eaten_grains()
         if self.counter % 10 == 0:  # Типа таймера, чтобы мигали не сильно часто
             if self.big_grain_draw:
