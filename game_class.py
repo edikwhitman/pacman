@@ -50,6 +50,7 @@ class Game:
         self.pacman.move(self.map.data)
         self.ghosts[0].move(self.map.data)
         self.ghosts[0].set_chase_mode(self.map.data, self.get_pacman_cell())
+        #self.ghosts[0].set_scatter_mode(self.map.data)
         self.check_eaten_grains()
         if self.counter % 10 == 0:  # Типа таймера, чтобы мигали не сильно часто
             if self.big_grain_draw:
