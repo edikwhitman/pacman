@@ -135,6 +135,73 @@ class ScoresMenu:
                 j += 1
 
 
+# -------------------------------------------------------- TexturesMenu
+class TexturesMenu:
+    def __init__(self):
+        self.__buttons = []
+        self.__font = pygame.font.Font('font.ttf', 30)
+
+        # Left arrow
+        self.__buttons.append(
+            Button(1, 40, 240, 31, 51, 'images/ui/arrow_left_static.png', 'images/ui/arrow_left_pressed.png'))
+        # Right arrow
+        self.__buttons.append(
+            Button(2, 380, 240, 31, 51, 'images/ui/arrow_right_static.png', 'images/ui/arrow_right_pressed.png'))
+        # Exit button
+        self.__buttons.append(
+            Button(3, 95, 450, 260, 47, 'images/ui/button_set_static.png', 'images/ui/button_set_pressed.png'))
+
+    def check_events(self):
+        response = None
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pressed_button = self.__get_pressed_button()
+                if pressed_button is not None:
+                    # Смена текстурпака
+                    if pressed_button == 1:
+                        response = 1
+                    elif pressed_button == 2:
+                        response = 2
+                    # Выход из меню
+                    elif pressed_button == 3:
+                        response = 3
+            elif event.type == pygame.KEYDOWN:
+                # Смена карты
+                if event.key == pygame.K_LEFT:
+                    response = 1
+                elif event.key == pygame.K_RIGHT:
+                    response = 2
+                elif event.key == 13:
+                    response = 3
+            # Выход из игры
+            elif event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        return response
+
+    def process_logic(self):
+        for button in self.__buttons:
+            button.logic(pygame.mouse.get_pos())
+
+    def __get_pressed_button(self):  # Возвращает id кнопки на которую нажали
+        for button in self.__buttons:
+            if button.get_status() == 1:
+                return button.get_id()
+        return None
+
+    def process_drawing(self, screen, texturepack):
+        screen.fill(BLACK)
+
+        for button in self.__buttons:  # отрисовка кнопок
+            button.draw(screen)
+
+        text = self.__font.render(texturepack.name, True, BLUE)  # отрисовка названия карты
+        text_rect = text.get_rect(center=(WIDTH / 2, 60))
+        screen.blit(text, text_rect)
+
+        screen.blit(texturepack.preview_img, (95, 130))
+
+
 # -------------------------------------------------------- StartMenu
 class StartMenu:
     def __init__(self, screen):
@@ -148,16 +215,18 @@ class StartMenu:
         self.__scores_buttons = []
         self.__font = pygame.font.Font('font.ttf', 40)
         self.scores_menu = ScoresMenu()
+        self.textures_menu = TexturesMenu()
 
         self.maps = []              # Массив карт
         self.__number_of_maps = 0   # Сколько всего карт
         self.__map_num = 0          # Номер текущей карты
-        self.__load_maps()  # Выгрузка рекордов всех карт
+        self.__load_maps()          # Выгрузка рекордов всех карт
 
         self.texturepacks = []              # Массив текстурпаков
         self.__number_of_texturepacks = 0   # Сколько всего текстурпаков
         self.__texturepack_num = 0          # Номер текущего текстурпака
-        self.__load_texturepacks()  # Подгрузка текстурпаков
+        self.__load_texturepacks()          # Подгрузка текстурпаков
+
         self.start_menu_image = pygame.image.load("images/ui/main_menu.png")  # Фон основного меню
 
         # Start button
@@ -185,12 +254,12 @@ class StartMenu:
 
         while self.main_menu_loop_run:
 
-            if not self.scores_menu_opened:  # Сцена основного меню
+            if not self.scores_menu_opened and not self.textures_menu_opened:  # Сцена основного меню
                 self.process_logic()
                 self.check_events()
                 self.process_drawing()
 
-            else:  # Сцена меню рекордов
+            elif self.scores_menu_opened:  # Сцена меню рекордов
                 self.scores_menu.process_logic()
                 response = self.scores_menu.check_events()
                 if response == 1:
@@ -200,6 +269,17 @@ class StartMenu:
                 elif response == 3:
                     self.scores_menu_opened = False
                 self.scores_menu.process_drawing(self.screen, self.maps[self.__map_num])
+
+            elif self.textures_menu_opened:  # Сцена меню рекордов
+                self.textures_menu.process_logic()
+                response = self.textures_menu.check_events()
+                if response == 1:
+                    self.__switch_texturepack(-1)
+                elif response == 2:
+                    self.__switch_texturepack(1)
+                elif response == 3:
+                    self.textures_menu_opened = False
+                self.textures_menu.process_drawing(self.screen, self.texturepacks[self.__texturepack_num])
 
             pygame.display.flip()
             pygame.time.wait(20)

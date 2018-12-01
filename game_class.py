@@ -1,12 +1,13 @@
 import pygame
 import sys
 from pacman import Pacman
-from config import BLACK
+from config import BLACK, WHITE
 from ghosts import Blinky, Pinky, Inky, Clyde
 
 
 class Game:
     def __init__(self, screen):
+        self.game_loop_run = True
         self.screen = screen  # Плоскость отображения
         self.pacman_start_spawn = None
         self.fruit_spawn = None
@@ -32,18 +33,21 @@ class Game:
         # 8 - пустая клетка
         self.score = 0
         self.texturepack = None  # Текущий текстурпак (экземпляр класса Texturepack)
+        self.lives = 3
 
     def main_loop(self):
         print('game loop run')
-        game_loop_run = True
-        while game_loop_run:
+        while self.game_loop_run:
             if self.__check_event() == 1:
-                game_loop_run = False
+                self.game_loop_run = False
             self.__process_drawing()
             self.__process_logic()
 
             pygame.display.flip()
             pygame.time.wait(10)
+        # После конца игры
+        self.map.add_new_score(self.score)
+        self.map.write_scores()
         print('game loop stop')
 
     def __process_logic(self):
@@ -66,6 +70,8 @@ class Game:
         self.counter += 1
         if self.counter == 100:
             self.counter = 0
+        if self.lives == 0:
+            self.game_loop_run = False
 
     # Отрисовка не статичных объектов
     def __process_drawing(self):
@@ -85,11 +91,38 @@ class Game:
 
         # 3. pac man
         self.pacman.draw(self.screen)
+
         # 4. ghosts
         for ghost in self.ghosts:
             ghost.draw(self.screen)
+
         # 5. scores
-        #
+        font = pygame.font.Font('font.ttf', 25)
+
+        up = font.render('1UP', True, WHITE)  # Надпись над текущим счетом
+        up_rect = up.get_rect(topleft=(16*2, 0))
+        self.screen.blit(up, up_rect)
+
+        score_now = font.render(str(self.score), True, WHITE)  # Текущий счет
+        sc_rect = score_now.get_rect(topleft=(16*3, 20))
+        self.screen.blit(score_now, sc_rect)
+
+        hs_txt = font.render('HIGH SCORE', True, WHITE)  # Надпись над наибольшим счетом
+        hs_txt_rect = hs_txt.get_rect(topleft=(16*9, 0))
+        self.screen.blit(hs_txt, hs_txt_rect)
+        if not self.map.scores:
+            hs = font.render(str(self.score), True, WHITE)  # Наибольший счет
+        else:
+            hs = font.render(str(self.map.scores[0]) if self.map.scores[0] > self.score else str(self.score),
+                             True, WHITE)  # Наибольший счет
+        hs_rect = hs.get_rect(topleft=(16*14, 20))
+        self.screen.blit(hs, hs_rect)
+
+        # Жизни
+        live_pacman = pygame.image.load('./texturepacks/{}/pacman/pacman_stand.png'.format(self.texturepack.name))
+        live_pacman = pygame.transform.rotate(live_pacman, 90)
+        for i in range(self.lives):
+            self.screen.blit(live_pacman, (16 * 2*(i+1) + 5*i, 34 * 16))
 
     # Обработка ивентов
     def __check_event(self):
@@ -139,6 +172,7 @@ class Game:
         self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
 
         # установка остальных необходимых значений
+        self.map.load_scores()
 
     def get_pacman_cell(self):  # Возвращает клетку, в которой находится пакман сейчас в виде колонка, строка
         return (self.pacman.x + 16) // 16, (self.pacman.y - 40) // 16
