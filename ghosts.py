@@ -1,12 +1,16 @@
+import random
+
 from character import AnimatedCharacter
 import pygame
 
 
 class Ghost(AnimatedCharacter):
-    def __init__(self, x, y, name, scatter_point = (0, 0), width=32, height=32, ghost_room_exit_point = (13, 14),time=5):
+    def __init__(self, x, y, name, scatter_point = (0, 0), width=32, height=32, ghost_room_exit_point = (13, 14),time=8):
         self.name = name
-        img = "./images/entity/ghosts/" + self.name + "_moving.png"
-        super().__init__(x, y, img, self.get_image_parts(img), width, height, True, time)
+        self.img = "./images/entity/ghosts/" + self.name + "_moving.png"
+        self.frightened_img = "./images/entity/ghosts/fear_moving.png"
+        
+        super().__init__(x, y, self.img, self.get_image_parts(self.img), width, height, True, time)
         self.movement_direction = 0  # 0 - стоит на месте, 1 - движется вверх, 2 - вниз, 3 - влево, 4 - вправо
         self.movement_direction_queue = 0
         self.animation_status = 0  # 0 - есть, 1 - анимация смерти, 2 - стоять
@@ -15,35 +19,42 @@ class Ghost(AnimatedCharacter):
         self.absolute_speed = 2
         self.current_cell = list
         self.ghost_room_exit_point = ghost_room_exit_point
+        self.ghost_status = 0 # 0 - режим преследования, 1 - режим разбегания, 2 - режим страха
         self.set_split_sprites_range(5, 6)
         self.inside_ghost_house = True
         self.scatter_point = scatter_point
 
     def set_moving_animation(self, direction):
-        if direction == 1:
-            self.movement_direction = 1
-            self.set_split_sprites_range(5, 6)
-        if direction == 2:
-            self.movement_direction = 2
-            self.set_split_sprites_range(7, 8)
-        if direction == 3:
-            self.movement_direction = 3
-            self.set_split_sprites_range(3, 4)
-        if direction == 4:
-            self.movement_direction = 4
-            self.set_split_sprites_range(1, 2)
+        if self.ghost_status == 0:
+            print(self.ghost_status)
+            if direction == 1:
+                self.movement_direction = 1
+                self.set_split_sprites_range(5, 6)
+            if direction == 2:
+                self.movement_direction = 2
+                self.set_split_sprites_range(7, 8)
+            if direction == 3:
+                self.movement_direction = 3
+                self.set_split_sprites_range(3, 4)
+            if direction == 4:
+                self.movement_direction = 4
+                self.set_split_sprites_range(1, 2)
 
     def change_direction(self, map):  # Проверка на возможность поворота
-        if self.movement_direction_queue == 3 and map[(self.y + 16 - 48) // 16][(self.x - 2) // 16] != "0":
+        if self.movement_direction_queue == 3 and map[(self.y + 22 - 48) // 16][(self.x - 2) // 16] != "0":
             self.movement_direction = 3
             self.movement_direction_queue = 0
-        elif self.movement_direction_queue == 4 and map[(self.y + 16 - 48) // 16][(self.x + 34) // 16] != "0":
+        elif self.movement_direction_queue == 4 and map[(self.y + 22 - 48) // 16][(self.x + 34) // 16] != "0":
             self.movement_direction = 4
             self.movement_direction_queue = 0
-        elif self.movement_direction_queue == 1 and map[(self.y - 44) // 16][(self.x + 16) // 16] != "0":
+        elif self.movement_direction_queue == 1 and \
+                ((map[(self.y - 44) // 16][(self.x + 8) // 16] != "0" and self.movement_direction == 4)
+                or (map[(self.y - 44) // 16][(self.x + 22) // 16] != "0" and self.movement_direction == 3)):
             self.movement_direction = 1
             self.movement_direction_queue = 0
-        elif self.movement_direction_queue == 2 and map[(self.y - 10) // 16][(self.x + 16) // 16] != "0":
+        elif self.movement_direction_queue == 2 and \
+                ((map[(self.y - 10) // 16][(self.x + 8) // 16] != "0" and self.movement_direction == 4)
+                or (map[(self.y - 10) // 16][(self.x + 22) // 16] != "0" and self.movement_direction == 3)):
             self.movement_direction = 2
             self.movement_direction_queue = 0
 
@@ -66,15 +77,16 @@ class Ghost(AnimatedCharacter):
             self.horisontal_speed = 0
 
     def check_event(self, event):  # Проверка событий
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_w or event.key == pygame.K_UP:  # Идти вверх
-                self.movement_direction = 1
-            elif event.key == pygame.K_a or event.key == pygame.K_LEFT:  # Идти влево
-                self.movement_direction = 3
-            elif event.key == pygame.K_s or event.key == pygame.K_DOWN:  # Идти вниз
-                self.movement_direction = 2
-            elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:  # Идти вправо
-                self.movement_direction = 4
+        if self.ghost_status == 0:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_w or event.key == pygame.K_UP:  # Идти вверх
+                    self.movement_direction = 1
+                elif event.key == pygame.K_a or event.key == pygame.K_LEFT:  # Идти влево
+                    self.movement_direction = 3
+                elif event.key == pygame.K_s or event.key == pygame.K_DOWN:  # Идти вниз
+                    self.movement_direction = 2
+                elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:  # Идти вправо
+                    self.movement_direction = 4
 
     def position_logic(self):  # Изменение положения пакмана с учётом телепортов
         if self.x > 448:
@@ -142,14 +154,37 @@ class Ghost(AnimatedCharacter):
             if abs((self.ghost_room_exit_point[0] * 16) - self.x) > self.absolute_speed:
                 direct = ((self.ghost_room_exit_point[0] * 16) - self.x) / abs((self.ghost_room_exit_point[0] * 16) - self.x)
                 self.set_x(int(self.x + direct * self.absolute_speed))
+                if direct > 0:
+                    self.set_moving_animation(4)
+                else:
+                    self.set_moving_animation(3)
             elif self.y > (self.ghost_room_exit_point[1]-1) * 16+10:
                 self.set_y(self.y - self.absolute_speed)
                 self.set_x((self.ghost_room_exit_point[0] * 16))
+                self.set_moving_animation(1)
             else:
                 self.inside_ghost_house = False
 
     def set_scatter_mode(self, map):
         self.set_chase_mode(map, self.scatter_point)
+
+    def set_frightened_mode(self, map):
+        self.set_frightened_img(True)
+        self.set_chase_mode(map, (random.randint(0, 50), random.randint(0, 50)))
+
+    def set_frightened_img(self, blink = False):
+        if self.ghost_status != 2:
+            self.set_animation(self.frightened_img, self.get_image_parts(self.frightened_img), True, self.time)
+        if blink:
+            self.set_split_sprites_range(5, 8)
+        else:
+            self.set_split_sprites_range(5, 6)
+        self.ghost_status = 2
+
+    def set_scatter_img(self):
+        if self.ghost_status > 1:
+            self.set_animation(self.img, self.get_image_parts(self.img), True, self.time)
+            self.ghost_status = 0
 
     def get_points_distance(self, p1, p2):
         return ((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)**0.5

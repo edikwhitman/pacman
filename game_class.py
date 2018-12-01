@@ -54,6 +54,7 @@ class Game:
         self.pacman.move(self.map.data)
         self.ghosts[0].set_chase_mode(self.map.data, self.get_pacman_cell())
         self.ghosts[0].move(self.map.data)
+        self.ghosts[0].set_frightened_mode(self.map.data)
         self.ghosts[1].set_pinky_chase_mode(self.map.data, self.get_pacman_cell(), self.pacman.movement_direction)
         self.ghosts[1].move(self.map.data)
         self.ghosts[2].set_inky_chase_mode(self.map.data, self.get_pacman_cell(), self.pacman.movement_direction, self.ghosts[0].get_ghost_cell())
