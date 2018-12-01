@@ -12,7 +12,7 @@ class Ghost(AnimatedCharacter):
         self.animation_status = 0  # 0 - есть, 1 - анимация смерти, 2 - стоять
         self.vertical_speed = 0
         self.horisontal_speed = 0
-        self.absolute_speed = 3
+        self.absolute_speed = 2
         self.current_cell = list
         self.ghost_room_exit_point = ghost_room_exit_point
         self.set_split_sprites_range(5, 6)
@@ -140,8 +140,8 @@ class Ghost(AnimatedCharacter):
         if self.inside_ghost_house:
             pos = self.get_ghost_cell()
             if abs((self.ghost_room_exit_point[0] * 16) - self.x) > self.absolute_speed:
-                direct = (self.ghost_room_exit_point[0] * 16) - self.x / abs((self.ghost_room_exit_point[0] * 16) - self.x)
-                self.set_x(self.x + int(direct / abs(direct) * self.absolute_speed))
+                direct = ((self.ghost_room_exit_point[0] * 16) - self.x) / abs((self.ghost_room_exit_point[0] * 16) - self.x)
+                self.set_x(int(self.x + direct * self.absolute_speed))
             elif self.y > (self.ghost_room_exit_point[1]-1) * 16+10:
                 self.set_y(self.y - self.absolute_speed)
                 self.set_x((self.ghost_room_exit_point[0] * 16))
@@ -193,7 +193,6 @@ class Inky(Ghost):  # Голубой
             target = (target_position[0], target_position[1])
 
         target = (blinky_position[0] + (target_position[0] - blinky_position[0]) * 2, blinky_position[1] + (target_position[1] - blinky_position[1]) * 2)
-        print(target_position, blinky_position, target)
         self.set_chase_mode(map, (target[0], target[1]))
 
 
@@ -201,3 +200,10 @@ class Inky(Ghost):  # Голубой
 class Clyde(Ghost):  # Оранжевый
     def __init__(self, x, y):
         super().__init__(x, y, "clyde", (0, 30))
+
+    def set_clyde_chase_mode(self, map, target_position):
+        if self.get_points_distance(self.get_ghost_cell(), target_position) > 8:
+            self.set_chase_mode(map, target_position)
+        else:
+            self.set_scatter_mode(map)
+
