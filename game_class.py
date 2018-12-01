@@ -166,7 +166,6 @@ class Game:
         self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
 
         # установка остальных необходимых значений
-        self.map.load_scores()
 
     def get_pacman_cell(self):  # Возвращает клетку, в которой находится пакман сейчас в виде колонка, строка
         return (self.pacman.x + 16) // 16, (self.pacman.y - 40) // 16

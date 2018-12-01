@@ -8,9 +8,16 @@ from config import WIDTH, BLUE, BLACK, WHITE
 class Gameover:
     def __init__(self, score, screen):
         self.__buttons = []
-        self.__font = pygame.font.Font('font.ttf', 30)
+        self.__font = pygame.font.Font('font.ttf', 50)
         self.score = score
         self.screen = screen
+
+        self.__buttons.append(
+            Button(1, 25, 350, 260, 47, 'images/ui/button_set_static.png', 'images/ui/button_set_pressed.png'))
+
+        self.__buttons.append(
+            Button(2, 169, 450, 110, 47, 'images/ui/button_settings_static.png',
+                   'images/ui/button_settings_pressed.png'))
 
         self.__buttons.append(
             Button(3, 292, 450, 110, 47, 'images/ui/button_exit_static.png', 'images/ui/button_exit_pressed.png'))
@@ -19,7 +26,11 @@ class Gameover:
         print('after game menu run')
         while True:
             self.process_logic()
-            self.check_events()
+            response = self.check_events()
+            if response == 1:
+                return 1
+            elif response == 2:
+                return None
             self.process_drawing()
 
     def check_events(self):
@@ -36,7 +47,8 @@ class Gameover:
                         response = 2
                     # Выход
                     elif pressed_button == 3:
-                        response = 3
+                        pygame.quit()
+                        sys.exit()
             # Выход из игры
             elif event.type == pygame.QUIT:
                 pygame.quit()
@@ -59,7 +71,14 @@ class Gameover:
         for button in self.__buttons:  # отрисовка кнопок
             button.draw(self.screen)
 
-        text = self.__font.render('GAME OVER', True, BLUE)
-        text_rect = text.get_rect(center=(WIDTH / 2, 60))
-        self.screen.blit(text, text_rect)
+        game_over = self.__font.render('GAME OVER', True, BLUE)
+        game_over_rect = game_over.get_rect(center=(WIDTH / 2, 60))
+        self.screen.blit(game_over, game_over_rect)
+
+        new_font = pygame.font.Font('font.ttf', 40)
+
+        score_txt = new_font.render('SCORE: {}'.format(self.score), True, WHITE)
+        score_txt_rect = score_txt.get_rect(topleft=(game_over_rect.x, 120))
+        self.screen.blit(score_txt, score_txt_rect)
+
         pygame.display.flip()

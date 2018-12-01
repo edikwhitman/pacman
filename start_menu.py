@@ -35,8 +35,8 @@ class Map:
     # Запись всех рекодов из памяти в файл
     def write_scores(self):
         with open('maps/{}/highscores.txt'.format(self.name), 'w') as f:
-            for i in self.scores:
-                f.write('{}\n'.format(i))
+            for i in range(10 if self.amount_of_scores >= 10 else self.amount_of_scores):
+                f.write('{}\n'.format(self.scores[i]))
         # print('written to file ', self.scores)
 
     def reload_data(self):
