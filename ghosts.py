@@ -3,9 +3,10 @@ import pygame
 
 
 class Ghost(AnimatedCharacter):
-    def __init__(self, x, y, name, scatter_point = (0, 0), width=32, height=32, time=5):
+    def __init__(self, x, y, name, scatter_point = (0, 0), width=32, height=32, ghost_room_exit_point = (13, 14),time=5):
         self.name = name
-        super().__init__(x, y, "./images/entity/ghosts/" + self.name + "_moving.png", 8, width, height, True, time)
+        img = "./images/entity/ghosts/" + self.name + "_moving.png"
+        super().__init__(x, y, img, self.get_image_parts(img), width, height, True, time)
         self.movement_direction = 0  # 0 - стоит на месте, 1 - движется вверх, 2 - вниз, 3 - влево, 4 - вправо
         self.movement_direction_queue = 0
         self.animation_status = 0  # 0 - есть, 1 - анимация смерти, 2 - стоять
@@ -13,6 +14,9 @@ class Ghost(AnimatedCharacter):
         self.horisontal_speed = 0
         self.absolute_speed = 3
         self.current_cell = list
+        self.ghost_room_exit_point = ghost_room_exit_point
+        self.set_split_sprites_range(5, 6)
+        self.inside_ghost_house = True
         self.scatter_point = scatter_point
 
     def set_moving_animation(self, direction):
@@ -84,16 +88,19 @@ class Ghost(AnimatedCharacter):
         return (self.x + 16) // 16, (self.y - 40) // 16
 
     def move(self, map):  # Движение
-        try:
-            self.change_direction(map)
-        except IndexError:
-            pass
-        try:
-            self.check_collision(map)
-        except IndexError:
-            pass
-        self.position_logic()
-        self.set_moving_animation(self.movement_direction)
+        if not self.inside_ghost_house:
+            try:
+                self.change_direction(map)
+            except IndexError:
+                pass
+            try:
+                self.check_collision(map)
+            except IndexError:
+                pass
+            self.position_logic()
+            self.set_moving_animation(self.movement_direction)
+        else:
+            self.ghost_room_exit(map)
 
     def set_chase_mode(self, map, target_position):
         try:
@@ -129,6 +136,18 @@ class Ghost(AnimatedCharacter):
                     self.movement_direction_queue = direction
         except IndexError:pass
 
+    def ghost_room_exit(self, map):
+        if self.inside_ghost_house:
+            pos = self.get_ghost_cell()
+            if abs((self.ghost_room_exit_point[0] * 16) - self.x) > self.absolute_speed:
+                direct = (self.ghost_room_exit_point[0] * 16) - self.x / abs((self.ghost_room_exit_point[0] * 16) - self.x)
+                self.set_x(self.x + int(direct / abs(direct) * self.absolute_speed))
+            elif self.y > (self.ghost_room_exit_point[1]-1) * 16+10:
+                self.set_y(self.y - self.absolute_speed)
+                self.set_x((self.ghost_room_exit_point[0] * 16))
+            else:
+                self.inside_ghost_house = False
+
     def set_scatter_mode(self, map):
         self.set_chase_mode(map, self.scatter_point)
 
@@ -138,6 +157,7 @@ class Ghost(AnimatedCharacter):
 class Blinky(Ghost):  # Красный
     def __init__(self, x, y):
         super().__init__(x, y, "blinky", (30, -30))
+        self.inside_ghost_house = False
 
 class Pinky(Ghost):  # Розовый
     def __init__(self, x, y):
