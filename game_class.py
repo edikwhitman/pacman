@@ -113,11 +113,11 @@ class Game:
         live_pacman = pygame.image.load('./texturepacks/{}/pacman/pacman_stand.png'.format(self.texturepack.name))
         live_pacman = pygame.transform.rotate(live_pacman, 90)
         if self.lives > 0:
-            self.screen.blit(live_pacman, (16*2, 34*16))
+            self.screen.blit(live_pacman, (16 * 2, 34 * 16))
             if self.lives > 1:
-                self.screen.blit(live_pacman, (16 * 4, 34 * 16))
+                self.screen.blit(live_pacman, (16 * 4 + 5, 34 * 16))
                 if self.lives > 2:
-                    self.screen.blit(live_pacman, (16 * 6, 34 * 16))
+                    self.screen.blit(live_pacman, (16 * 6 + 10, 34 * 16))
 
     # Обработка ивентов
     def __check_event(self):
