@@ -139,10 +139,21 @@ class Blinky(Ghost):  # Красный
     def __init__(self, x, y):
         super().__init__(x, y, "blinky", (30, -30))
 
-
 class Pinky(Ghost):  # Розовый
     def __init__(self, x, y):
         super().__init__(x, y, "pinky", (0, 0))
+
+    def set_pinky_chase_mode(self, map, target_position, target_direction):
+        if target_direction == 1:
+            self.set_chase_mode(map, (target_position[0], target_position[1]-4))
+        elif target_direction == 2:
+            self.set_chase_mode(map, (target_position[0], target_position[1]+4))
+        elif target_direction == 3:
+            self.set_chase_mode(map, (target_position[0]-4, target_position[1]))
+        elif target_direction == 4:
+            self.set_chase_mode(map, (target_position[0]+4, target_position[1]))
+        elif target_direction == 0:
+            self.set_chase_mode(map, (target_position[0], target_position[1]))
 
 
 class Inky(Ghost):  # Голубой

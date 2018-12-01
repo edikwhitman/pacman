@@ -61,6 +61,7 @@ class Pacman(AnimatedCharacter):
         else:
             self.horisontal_speed = 0
             self.vertical_speed = 0
+            self.movement_direction = 0
             self.set_stand_animation()
 
     def check_event(self, event):  # Проверка событий
