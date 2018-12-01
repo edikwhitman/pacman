@@ -180,6 +180,23 @@ class Inky(Ghost):  # Голубой
     def __init__(self, x, y):
         super().__init__(x, y, "inky", (30, 30))
 
+    def set_inky_chase_mode(self, map, target_position, target_direction, blinky_position):
+        if target_direction == 1:
+            target = (target_position[0], target_position[1]-2)
+        elif target_direction == 2:
+            target = (target_position[0], target_position[1]+2)
+        elif target_direction == 3:
+            target = (target_position[0]-2, target_position[1])
+        elif target_direction == 4:
+            target = (target_position[0]+2, target_position[1])
+        elif target_direction == 0:
+            target = (target_position[0], target_position[1])
+
+        target = (blinky_position[0] + (target_position[0] - blinky_position[0]) * 2, blinky_position[1] + (target_position[1] - blinky_position[1]) * 2)
+        print(target_position, blinky_position, target)
+        self.set_chase_mode(map, (target[0], target[1]))
+
+
 
 class Clyde(Ghost):  # Оранжевый
     def __init__(self, x, y):
