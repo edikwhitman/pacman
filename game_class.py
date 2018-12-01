@@ -121,6 +121,9 @@ class Game:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return 1
             self.pacman.check_event(event)
 
     def __reset_grains(self):

@@ -2,6 +2,7 @@ import pygame
 from config import SIZE
 from start_menu import StartMenu
 from game_class import Game
+from after_game_menu import Gameover
 
 
 def main():
@@ -20,11 +21,9 @@ def main():
 
         game.main_loop()  # Основной цикл игры
 
-        # Получение счета из класса игры
-        # Добавление счета и выгрузка в файл
-        #
-
         # Сцена послеигрового меню
+        after_game = Gameover(game.score, screen)
+        after_game.main_loop()
 
 
 if __name__ == '__main__':
