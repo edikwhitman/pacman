@@ -102,7 +102,7 @@ class Pacman(AnimatedCharacter):
     def set_death_animation(self):
         if not self.animation_status == 1:
             self.animation_status = 1
-            self.set_animation(self.texture_death, self.get_image_parts(self.texture_death), False, self.original_time*3)
+            self.set_animation(self.texture_death, self.get_image_parts(self.texture_death), False, self.original_time*2)
 
     def set_stand_animation(self):
         if self.animation_status == 0:

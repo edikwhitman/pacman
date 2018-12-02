@@ -54,13 +54,14 @@ class Game:
         self.pacman.move(self.map.data)
         self.ghosts[0].set_chase_mode(self.map.data, self.get_pacman_cell())
         self.ghosts[0].move(self.map.data)
-        self.ghosts[0].set_frightened_mode(self.map.data)
+        #self.ghosts[0].set_frightened_mode(self.map.data)
         self.ghosts[1].set_pinky_chase_mode(self.map.data, self.get_pacman_cell(), self.pacman.movement_direction)
         self.ghosts[1].move(self.map.data)
         self.ghosts[2].set_inky_chase_mode(self.map.data, self.get_pacman_cell(), self.pacman.movement_direction, self.ghosts[0].get_ghost_cell())
         self.ghosts[2].move(self.map.data)
         self.ghosts[3].set_clyde_chase_mode(self.map.data, self.get_pacman_cell())
         self.ghosts[3].move(self.map.data)
+        self.check_pacman_ghost_collision()
         #self.ghosts[0].set_scatter_mode(self.map.data)
         self.check_eaten_grains()
         if self.counter % 10 == 0:  # Типа таймера, чтобы мигали не сильно часто
@@ -81,7 +82,6 @@ class Game:
 
         # 1. изображение карты map_img.png
         self.screen.blit(self.map.img, (0, 48))
-
         # 2. зерна и фрукты
         for i in range(31):
             for j in range(28):
@@ -177,6 +177,13 @@ class Game:
 
     def get_pacman_cell(self):  # Возвращает клетку, в которой находится пакман сейчас в виде колонка, строка
         return (self.pacman.x + 16) // 16, (self.pacman.y - 40) // 16
+
+    def check_pacman_ghost_collision(self):
+        for ghost in self.ghosts:
+            if ghost.ghost_status != 2 and ghost.rect.colliderect(self.pacman.rect):
+                self.pacman.set_death_animation()
+                print("Death")
+
 
     def check_eaten_grains(self):
         for i in range(31):
