@@ -19,10 +19,12 @@ class Game:
         self.ghosts.append(Clyde(15 * 16, 14 * 16 + 48 - 8))
         self.grain_img = None
         self.big_grain_img = None
-        self.big_grain_draw = True    # Отображаем большое зерно или нет. Чтобы мигание делать
+        self.big_grain_draw = True  # Отображаем большое зерно или нет. Чтобы мигание делать
         self.sum_of_eaten_grains = 0  # Счетчик съеденных зерен, нужен для последующего отображения вишен
-        self.counter = 1              # Счетчик прохода по game_loop, нужен как таймер
-        self.map = None               # Экземпляр класса карты, map.data - карта в виде символов:
+        self.counter = 1  # Счетчик прохода по game_loop, нужен как таймер
+        self.up_draw = True
+        self.map = None  # Экземпляр класса карты, map.data - карта в виде символов:
+        self.level = 1
         # 0 - стена
         # 1 - малое зерно
         # 2 - съеденное малое зерно
@@ -56,16 +58,25 @@ class Game:
         self.check_eaten_grains()
         if self.counter % 10 == 0:  # Типа таймера, чтобы мигали не сильно часто
             if self.big_grain_draw:
-                self.big_grain_draw = False
-            else:
-                self.big_grain_draw = True
+                self.big_grain_draw = not self.big_grain_draw
+        if self.counter % 20 == 0:
+            self.up_draw = not self.up_draw
         self.counter += 1
         if self.counter == 100:
             self.counter = 0
         if self.lives == 0:
             self.game_loop_run = False
         if self.sum_of_eaten_grains == self.map.count_of_grains:
-            self.game_loop_run = False
+            self.__reset_grains()
+            self.pacman.movement_direction = 0
+            self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
+            self.ghosts = list()
+            self.ghosts.append(Blinky(13 * 16, 11 * 16 + 48 - 8))
+            self.ghosts.append(Pinky(13 * 16, 14 * 16 + 48 - 8))
+            self.ghosts.append(Inky(11 * 16, 14 * 16 + 48 - 8))
+            self.ghosts.append(Clyde(15 * 16, 14 * 16 + 48 - 8))
+            self.sum_of_eaten_grains = 0
+            self.level += 1
 
     # Отрисовка не статичных объектов
     def __process_drawing(self):
@@ -92,31 +103,31 @@ class Game:
 
         # 5. scores
         font = pygame.font.Font('font.ttf', 25)
-
-        up = font.render('1UP', True, WHITE)  # Надпись над текущим счетом
-        up_rect = up.get_rect(topleft=(16*2, 0))
-        self.screen.blit(up, up_rect)
+        if self.up_draw:
+            up = font.render('1UP', True, WHITE)  # Надпись над текущим счетом
+            up_rect = up.get_rect(topleft=(16 * 2, 0))
+            self.screen.blit(up, up_rect)
 
         score_now = font.render(str(self.score), True, WHITE)  # Текущий счет
-        sc_rect = score_now.get_rect(topleft=(16*3, 20))
+        sc_rect = score_now.get_rect(topleft=(16 * 3, 20))
         self.screen.blit(score_now, sc_rect)
 
         hs_txt = font.render('HIGH SCORE', True, WHITE)  # Надпись над наибольшим счетом
-        hs_txt_rect = hs_txt.get_rect(topleft=(16*9, 0))
+        hs_txt_rect = hs_txt.get_rect(topleft=(16 * 9, 0))
         self.screen.blit(hs_txt, hs_txt_rect)
         if not self.map.scores:
             hs = font.render(str(self.score), True, WHITE)  # Наибольший счет
         else:
             hs = font.render(str(self.map.scores[0]) if self.map.scores[0] > self.score else str(self.score),
                              True, WHITE)  # Наибольший счет
-        hs_rect = hs.get_rect(topleft=(16*14, 20))
+        hs_rect = hs.get_rect(topleft=(16 * 14, 20))
         self.screen.blit(hs, hs_rect)
 
         # Жизни
         live_pacman = pygame.image.load('./texturepacks/{}/pacman/pacman_stand.png'.format(self.texturepack.name))
         live_pacman = pygame.transform.rotate(live_pacman, 90)
         for i in range(self.lives):
-            self.screen.blit(live_pacman, (16 * 2*(i+1) + 5*i, 34 * 16))
+            self.screen.blit(live_pacman, (16 * 2 * (i + 1) + 5 * i, 34 * 16))
 
     # Обработка ивентов
     def __check_event(self):
@@ -164,7 +175,6 @@ class Game:
             print('Error: No pacman start spawn point in map config file')
         if self.fruit_spawn is None:
             print('Error: No fruit spawn point in map config file')
-        print(self.map.count_of_grains)
 
         # Установка текстурок из текстурпака
         self.__set_textures()
