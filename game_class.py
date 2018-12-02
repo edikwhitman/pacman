@@ -3,6 +3,7 @@ import sys
 from pacman import Pacman
 from config import BLACK, WHITE
 from ghosts import Blinky, Pinky, Inky, Clyde
+from level_management import LevelManagement
 
 
 class Game:
@@ -12,6 +13,7 @@ class Game:
         self.pacman_start_spawn = None
         self.fruit_spawn = None
         self.pacman = None
+        self.level = LevelManagement()
         self.ghosts = list()
         self.ghosts.append(Blinky(13 * 16, 11 * 16 + 48 - 8))
         self.ghosts.append(Pinky(13 * 16, 14 * 16 + 48 - 8))
@@ -52,16 +54,8 @@ class Game:
 
     def __process_logic(self):
         self.pacman.move(self.map.data)
-        self.ghosts[0].set_chase_mode(self.map.data, self.get_pacman_cell())
-        self.ghosts[0].move(self.map.data)
-        #self.ghosts[0].set_frightened_mode(self.map.data)
-        self.ghosts[1].set_pinky_chase_mode(self.map.data, self.get_pacman_cell(), self.pacman.movement_direction)
-        self.ghosts[1].move(self.map.data)
-        self.ghosts[2].set_inky_chase_mode(self.map.data, self.get_pacman_cell(), self.pacman.movement_direction, self.ghosts[0].get_ghost_cell())
-        self.ghosts[2].move(self.map.data)
-        self.ghosts[3].set_clyde_chase_mode(self.map.data, self.get_pacman_cell())
-        self.ghosts[3].move(self.map.data)
-        self.check_pacman_ghost_collision()
+        self.level.manage(self.map.data, self.pacman, self.ghosts, self.score)
+        #self.check_pacman_ghost_collision()
         #self.ghosts[0].set_scatter_mode(self.map.data)
         self.check_eaten_grains()
         if self.counter % 10 == 0:  # Типа таймера, чтобы мигали не сильно часто

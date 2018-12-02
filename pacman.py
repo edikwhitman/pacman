@@ -112,6 +112,9 @@ class Pacman(AnimatedCharacter):
     def get_pos(self):
         return self.x, self.y
 
+    def get_pacman_cell(self):  # Возвращает клетку, в которой находится пакман сейчас в виде колонка, строка
+        return (self.x + 16) // 16, (self.y - 40) // 16
+
     def draw(self, screen, upd_time=1):
         super().draw(screen, upd_time)
         self.rect = pygame.Rect(self.x + self.width/4, self.y + self.height/4, self.width/2, self.height/2)
