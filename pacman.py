@@ -61,6 +61,7 @@ class Pacman(AnimatedCharacter):
         else:
             self.horisontal_speed = 0
             self.vertical_speed = 0
+            self.movement_direction = 0
             self.set_stand_animation()
 
     def check_event(self, event):  # Проверка событий
@@ -101,7 +102,7 @@ class Pacman(AnimatedCharacter):
     def set_death_animation(self):
         if not self.animation_status == 1:
             self.animation_status = 1
-            self.set_animation(self.texture_death, self.get_image_parts(self.texture_death), False, self.original_time*3)
+            self.set_animation(self.texture_death, self.get_image_parts(self.texture_death), False, self.original_time*2)
 
     def set_stand_animation(self):
         if self.animation_status == 0:
@@ -110,3 +111,10 @@ class Pacman(AnimatedCharacter):
 
     def get_pos(self):
         return self.x, self.y
+
+    def get_pacman_cell(self):  # Возвращает клетку, в которой находится пакман сейчас в виде колонка, строка
+        return (self.x + 16) // 16, (self.y - 40) // 16
+
+    def draw(self, screen, upd_time=1):
+        super().draw(screen, upd_time)
+        self.rect = pygame.Rect(self.x + self.width/4, self.y + self.height/4, self.width/2, self.height/2)

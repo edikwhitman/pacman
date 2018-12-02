@@ -11,6 +11,7 @@ class Character:  # Статичный персонаж
         self.height = height
         self.angle = 0
         self.set_position(self.x, self.y)
+        self.rect = pygame.Rect(x, y, width, height)
 
     def set_x(self, x):  # Задать координату X
         self.x = x
@@ -50,6 +51,7 @@ class Character:  # Статичный персонаж
         self.object_rect = self.object.get_rect()
 
     def draw(self, screen):  # Вывод на экран
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         screen.blit(self.object, self.object_rect)
 
 
@@ -113,6 +115,7 @@ class AnimatedCharacter(Character):  # Анимированный персона
         return width // height
 
     def draw(self, screen, upd_time=1):  # Вывод на экран
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         if not self.end:
             self.object = self.get_sprite()
             self.update(upd_time)

@@ -3,6 +3,7 @@ import sys
 from pacman import Pacman
 from config import BLACK, WHITE
 from ghosts import Blinky, Pinky, Inky, Clyde
+from level_management import LevelManagement
 
 
 class Game:
@@ -12,6 +13,7 @@ class Game:
         self.pacman_start_spawn = None
         self.fruit_spawn = None
         self.pacman = None
+        self.level = LevelManagement()
         self.ghosts = list()
         self.ghosts.append(Blinky(13 * 16, 11 * 16 + 48 - 8))
         self.ghosts.append(Pinky(13 * 16, 14 * 16 + 48 - 8))
@@ -24,7 +26,6 @@ class Game:
         self.counter = 1  # Счетчик прохода по game_loop, нужен как таймер
         self.up_draw = True
         self.map = None  # Экземпляр класса карты, map.data - карта в виде символов:
-        self.level = 1
         # 0 - стена
         # 1 - малое зерно
         # 2 - съеденное малое зерно
@@ -61,6 +62,9 @@ class Game:
 
     def __process_logic(self):
         self.pacman.move(self.map.data)
+        self.level.manage(self.map.data, self.pacman, self.ghosts, self.score)
+        # self.check_pacman_ghost_collision()
+        # self.ghosts[0].set_scatter_mode(self.map.data)
         self.check_eaten_grains()
         if self.counter % 10 == 0:  # Типа таймера, чтобы мигали не сильно часто
             self.big_grain_draw = not self.big_grain_draw
@@ -82,7 +86,6 @@ class Game:
 
         # 1. изображение карты map_img.png
         self.screen.blit(self.map.img, (0, 48))
-
         # 2. зерна и фрукты
         for i in range(31):
             for j in range(28):
@@ -183,6 +186,12 @@ class Game:
     def get_pacman_cell(self):  # Возвращает клетку, в которой находится пакман сейчас в виде колонка, строка
         return (self.pacman.x + 16) // 16, (self.pacman.y - 40) // 16
 
+    def check_pacman_ghost_collision(self):
+        for ghost in self.ghosts:
+            if ghost.ghost_status != 2 and ghost.rect.colliderect(self.pacman.rect):
+                self.pacman.set_death_animation()
+                print("Death")
+
     def check_eaten_grains(self):
         for i in range(31):
             for j in range(28):
@@ -260,4 +269,4 @@ class Game:
         self.ghosts.append(Inky(11 * 16, 14 * 16 + 48 - 8))
         self.ghosts.append(Clyde(15 * 16, 14 * 16 + 48 - 8))
         self.sum_of_eaten_grains = 0
-        self.level += 1
+        self.level.level += 1
