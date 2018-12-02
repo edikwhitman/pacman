@@ -55,8 +55,8 @@ class Game:
     def __process_logic(self):
         self.pacman.move(self.map.data)
         self.level.manage(self.map.data, self.pacman, self.ghosts, self.score)
-        #self.check_pacman_ghost_collision()
-        #self.ghosts[0].set_scatter_mode(self.map.data)
+        # self.check_pacman_ghost_collision()
+        # self.ghosts[0].set_scatter_mode(self.map.data)
         self.check_eaten_grains()
         if self.counter % 10 == 0:  # Типа таймера, чтобы мигали не сильно часто
             if self.big_grain_draw:
@@ -177,7 +177,6 @@ class Game:
             if ghost.ghost_status != 2 and ghost.rect.colliderect(self.pacman.rect):
                 self.pacman.set_death_animation()
                 print("Death")
-
 
     def check_eaten_grains(self):
         for i in range(31):

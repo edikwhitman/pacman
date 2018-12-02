@@ -5,7 +5,7 @@ import pygame
 
 
 class Ghost(AnimatedCharacter):
-    def __init__(self, x, y, name, scatter_point = (0, 0), width=32, height=32, ghost_room_exit_point = (13, 14),time=8):
+    def __init__(self, x, y, name, scatter_point=(0, 0), width=32, height=32, ghost_room_exit_point=(13, 14), time=8):
         self.name = name
         self.img = "./images/entity/ghosts/" + self.name + "_moving.png"
         self.frightened_img = "./images/entity/ghosts/fear_moving.png"
@@ -19,7 +19,7 @@ class Ghost(AnimatedCharacter):
         self.absolute_speed = 2
         self.current_cell = list
         self.ghost_room_exit_point = ghost_room_exit_point
-        self.ghost_status = 0 # 0 - режим преследования, 1 - режим разбегания, 2 - режим страха
+        self.ghost_status = 0  # 0 - режим преследования, 1 - режим разбегания, 2 - режим страха
         self.set_split_sprites_range(5, 6)
         self.inside_ghost_house = True
         self.scatter_point = scatter_point
@@ -146,13 +146,15 @@ class Ghost(AnimatedCharacter):
                     self.movement_direction_queue = direction
                 if self.movement_direction == 4 and direction != 3:
                     self.movement_direction_queue = direction
-        except IndexError:pass
+        except IndexError:
+            pass
 
     def ghost_room_exit(self, map):
         if self.inside_ghost_house:
             pos = self.get_ghost_cell()
             if abs((self.ghost_room_exit_point[0] * 16) - self.x) > self.absolute_speed:
-                direct = ((self.ghost_room_exit_point[0] * 16) - self.x) / abs((self.ghost_room_exit_point[0] * 16) - self.x)
+                direct = ((self.ghost_room_exit_point[0] * 16) - self.x) / abs((self.ghost_room_exit_point[0] * 16)
+                                                                               - self.x)
                 self.set_x(int(self.x + direct * self.absolute_speed))
                 if direct > 0:
                     self.set_moving_animation(4)
@@ -172,7 +174,7 @@ class Ghost(AnimatedCharacter):
         self.set_frightened_img(True)
         self.set_chase_mode(map, (random.randint(0, 50), random.randint(0, 50)))
 
-    def set_frightened_img(self, blink = False):
+    def set_frightened_img(self, blink=False):
         if self.ghost_status != 2:
             self.set_animation(self.frightened_img, self.get_image_parts(self.frightened_img), True, self.time)
         if blink:
@@ -189,10 +191,12 @@ class Ghost(AnimatedCharacter):
     def get_points_distance(self, p1, p2):
         return ((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)**0.5
 
+
 class Blinky(Ghost):  # Красный
     def __init__(self, x, y):
         super().__init__(x, y, "blinky", (30, -30))
         self.inside_ghost_house = False
+
 
 class Pinky(Ghost):  # Розовый
     def __init__(self, x, y):
@@ -229,7 +233,6 @@ class Inky(Ghost):  # Голубой
 
         target = (blinky_position[0] + (target_position[0] - blinky_position[0]) * 2, blinky_position[1] + (target_position[1] - blinky_position[1]) * 2)
         self.set_chase_mode(map, (target[0], target[1]))
-
 
 
 class Clyde(Ghost):  # Оранжевый
