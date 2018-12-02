@@ -19,10 +19,10 @@ class Game:
         self.ghosts.append(Clyde(15 * 16, 14 * 16 + 48 - 8))
         self.grain_img = None
         self.big_grain_img = None
-        self.big_grain_draw = True  # Отображаем большое зерно или нет. Чтобы мигание делать
-        self.sum_of_eaten_grains = 0 #Счетчик съеденных зерен, нужен для последующего отображения вишен
-        self.counter = 1  # Счетчик прохода по game_loop, нужен как таймер
-        self.map = None  # Экземпляр класса карты, map.data - карта в виде символов (31 строка по 28 символов):
+        self.big_grain_draw = True    # Отображаем большое зерно или нет. Чтобы мигание делать
+        self.sum_of_eaten_grains = 0  # Счетчик съеденных зерен, нужен для последующего отображения вишен
+        self.counter = 1              # Счетчик прохода по game_loop, нужен как таймер
+        self.map = None               # Экземпляр класса карты, map.data - карта в виде символов:
         # 0 - стена
         # 1 - малое зерно
         # 2 - съеденное малое зерно
@@ -63,6 +63,8 @@ class Game:
         if self.counter == 100:
             self.counter = 0
         if self.lives == 0:
+            self.game_loop_run = False
+        if self.sum_of_eaten_grains == self.map.count_of_grains:
             self.game_loop_run = False
 
     # Отрисовка не статичных объектов
@@ -153,6 +155,8 @@ class Game:
                     self.pacman_start_spawn = (j * 16 - 16, i * 16 + 40)
                 elif char == '6' and previous_char == '6':
                     self.fruit_spawn = (j * 16 - 8, i * 16 + 48)
+                elif char == '1' or char == '3':
+                    self.map.count_of_grains += 1
                 previous_char = self.map.data[i][j]
             previous_char = None
 
@@ -160,6 +164,7 @@ class Game:
             print('Error: No pacman start spawn point in map config file')
         if self.fruit_spawn is None:
             print('Error: No fruit spawn point in map config file')
+        print(self.map.count_of_grains)
 
         # Установка текстурок из текстурпака
         self.__set_textures()

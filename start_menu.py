@@ -15,6 +15,7 @@ class Map:
         self.load_scores()
         self.data = []
         self.img = None
+        self.count_of_grains = 0
 
     # Выгрузка рекордов из файла в память
     def load_scores(self):
@@ -27,6 +28,7 @@ class Map:
 
     # Добавление нового рекорда (только в память)
     def add_new_score(self, num):
+        self.amount_of_scores += 1
         self.scores.append(num)
         self.scores.sort(reverse=True)
         if len(self.scores) > 10:
