@@ -9,7 +9,7 @@ class Ghost(AnimatedCharacter):
 
     def set_dir_animation(self, name):  # Поставить нужную картинку в зависимости от направления движения
         if self.movement_direction == 1:
-            self.set_animation("./images/entity/ghosts/{}_moving_up".png.format(name), 2, True, self.time*3)
+            self.set_animation("./images/entity/ghosts/{}_moving_up.png".format(name), 2, True, self.time*3)
         elif self.movement_direction == 2:
             self.set_animation("./images/entity/ghosts/{}_moving_down.png".format(name), 2, True, self.time*3)
         elif self.movement_direction == 3:
