@@ -75,6 +75,7 @@ class LevelManagement:
 
 
     def frightened(self, map, pacman, ghosts, scores):
+        self.ghosts_blinking = False
         for ghost in ghosts:
             ghost.set_frightened_mode(map)
         self.status = 2
