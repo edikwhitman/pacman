@@ -20,6 +20,7 @@ class Game:
         self.grain_img = None
         self.big_grain_img = None
         self.big_grain_draw = True  # Отображаем большое зерно или нет. Чтобы мигание делать
+        self.sum_of_eaten_grains = 0 #Счетчик съеденных зерен, нужен для последующего отображения вишен
         self.counter = 1  # Счетчик прохода по game_loop, нужен как таймер
         self.map = None  # Экземпляр класса карты, map.data - карта в виде символов (31 строка по 28 символов):
         # 0 - стена
@@ -178,8 +179,11 @@ class Game:
                     if char == '1':
                         self.map.data[i][j] = '2'
                         self.score += 10
+                        self.sum_of_eaten_grains += 1
                     elif char == '3':
                         self.map.data[i][j] = '4'
+                        self.score += 50
+                        self.sum_of_eaten_grains += 1
 
     def __set_textures(self):
         # grains
