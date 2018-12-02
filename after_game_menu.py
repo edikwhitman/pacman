@@ -13,11 +13,11 @@ class Gameover:
         self.screen = screen
 
         self.__buttons.append(
-            Button(1, 25, 350, 260, 47, 'images/ui/button_set_static.png', 'images/ui/button_set_pressed.png'))
+            Button(1, 46, 350, 260, 47, 'images/ui/button_restart_static.png', 'images/ui/button_restart_pressed.png'))
 
         self.__buttons.append(
-            Button(2, 169, 450, 110, 47, 'images/ui/button_settings_static.png',
-                   'images/ui/button_settings_pressed.png'))
+            Button(2, 46, 450, 233, 47, 'images/ui/button_menu_static.png',
+                   'images/ui/button_menu_pressed.png'))
 
         self.__buttons.append(
             Button(3, 292, 450, 110, 47, 'images/ui/button_exit_static.png', 'images/ui/button_exit_pressed.png'))
