@@ -40,6 +40,12 @@ class Game:
 
     def main_loop(self):
         print('game loop run')
+
+        self.__process_logic()
+        self.__process_drawing()
+        pygame.display.flip()
+        pygame.time.wait(3000)
+
         while self.game_loop_run:
             if self.__check_event() == 1:
                 self.game_loop_run = False
@@ -57,8 +63,7 @@ class Game:
         self.pacman.move(self.map.data)
         self.check_eaten_grains()
         if self.counter % 10 == 0:  # Типа таймера, чтобы мигали не сильно часто
-            if self.big_grain_draw:
-                self.big_grain_draw = not self.big_grain_draw
+            self.big_grain_draw = not self.big_grain_draw
         if self.counter % 20 == 0:
             self.up_draw = not self.up_draw
         self.counter += 1
@@ -66,17 +71,9 @@ class Game:
             self.counter = 0
         if self.lives == 0:
             self.game_loop_run = False
+
         if self.sum_of_eaten_grains == self.map.count_of_grains:
-            self.__reset_grains()
-            self.pacman.movement_direction = 0
-            self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
-            self.ghosts = list()
-            self.ghosts.append(Blinky(13 * 16, 11 * 16 + 48 - 8))
-            self.ghosts.append(Pinky(13 * 16, 14 * 16 + 48 - 8))
-            self.ghosts.append(Inky(11 * 16, 14 * 16 + 48 - 8))
-            self.ghosts.append(Clyde(15 * 16, 14 * 16 + 48 - 8))
-            self.sum_of_eaten_grains = 0
-            self.level += 1
+            self.change_level()
 
     # Отрисовка не статичных объектов
     def __process_drawing(self):
@@ -208,3 +205,59 @@ class Game:
         self.pacman.texture_stand = 'texturepacks/{}/pacman/pacman_stand.png'.format(self.texturepack.name)
         self.pacman.texture_death = 'texturepacks/{}/pacman/pacman_death.png'.format(self.texturepack.name)
         self.pacman.texture_eat = 'texturepacks/{}/pacman/pacman_eat.png'.format(self.texturepack.name)
+
+    def change_level(self):
+        if self.map.name == 'Classic':
+            for i in range(8):
+                self.screen.fill(BLACK)
+                # Очередь отрисовки:
+
+                # 1. изображение карты map_img.png
+                if i % 2 == 0:
+                    self.screen.blit(self.map.img, (0, 48))
+                else:
+                    self.screen.blit(pygame.image.load('./maps/Classic/map_img_blink.png'), (0, 48))
+
+                # 3. pac man
+                self.pacman.draw(self.screen)
+
+                # 5. scores
+                font = pygame.font.Font('font.ttf', 25)
+                up = font.render('1UP', True, WHITE)  # Надпись над текущим счетом
+                up_rect = up.get_rect(topleft=(16 * 2, 0))
+                self.screen.blit(up, up_rect)
+
+                score_now = font.render(str(self.score), True, WHITE)  # Текущий счет
+                sc_rect = score_now.get_rect(topleft=(16 * 3, 20))
+                self.screen.blit(score_now, sc_rect)
+
+                hs_txt = font.render('HIGH SCORE', True, WHITE)  # Надпись над наибольшим счетом
+                hs_txt_rect = hs_txt.get_rect(topleft=(16 * 9, 0))
+                self.screen.blit(hs_txt, hs_txt_rect)
+                if not self.map.scores:
+                    hs = font.render(str(self.score), True, WHITE)  # Наибольший счет
+                else:
+                    hs = font.render(str(self.map.scores[0]) if self.map.scores[0] > self.score else str(self.score),
+                                     True, WHITE)  # Наибольший счет
+                hs_rect = hs.get_rect(topleft=(16 * 14, 20))
+                self.screen.blit(hs, hs_rect)
+
+                # Жизни
+                live_pacman = pygame.image.load(
+                    './texturepacks/{}/pacman/pacman_stand.png'.format(self.texturepack.name))
+                live_pacman = pygame.transform.rotate(live_pacman, 90)
+                for j in range(self.lives):
+                    self.screen.blit(live_pacman, (16 * 2 * (j + 1) + 5 * j, 34 * 16))
+                pygame.display.flip()
+                pygame.time.wait(500)
+
+        self.__reset_grains()
+        self.pacman.movement_direction = 0
+        self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
+        self.ghosts = list()
+        self.ghosts.append(Blinky(13 * 16, 11 * 16 + 48 - 8))
+        self.ghosts.append(Pinky(13 * 16, 14 * 16 + 48 - 8))
+        self.ghosts.append(Inky(11 * 16, 14 * 16 + 48 - 8))
+        self.ghosts.append(Clyde(15 * 16, 14 * 16 + 48 - 8))
+        self.sum_of_eaten_grains = 0
+        self.level += 1
