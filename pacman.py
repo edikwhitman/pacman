@@ -95,7 +95,7 @@ class Pacman(AnimatedCharacter):
         self.position_logic()
 
     def set_eat_animation(self):
-        if self.animation_status == 2:
+        if self.animation_status == 2 or self.animation_status == 1:
             self.animation_status = 0
             self.set_animation(self.texture_eat, self.get_image_parts(self.texture_eat), True, self.original_time)
 
@@ -105,7 +105,7 @@ class Pacman(AnimatedCharacter):
             self.set_animation(self.texture_death, self.get_image_parts(self.texture_death), False, self.original_time*2)
 
     def set_stand_animation(self):
-        if self.animation_status == 0:
+        if self.animation_status == 0 or self.animation_status == 1:
             self.animation_status = 2
             self.set_animation(self.texture_stand, 1)
 

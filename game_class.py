@@ -188,15 +188,37 @@ class Game:
     def check_pacman_ghost_collision(self):
         for ghost in self.ghosts:
             if ghost.ghost_status != 2 and ghost.rect.colliderect(self.pacman.rect):
+                self.lives -= 1
                 self.pacman.set_death_animation()
                 self.pacman.movement_direction = 0
                 for g in self.ghosts:
                     g.movement_direction = 0
-                for i in range(100):
+                for i in range(90):
                     self.__process_drawing()
                     pygame.display.flip()
                     pygame.time.wait(10)
-                self.game_loop_run = False
+                if self.lives == 0:
+                    self.game_loop_run = False
+                else:
+                    self.pacman = Pacman(0, 0, 32, 32, 3, 3,
+                                         start_img_path='texturepacks/{}/pacman/pacman_stand.png'.format(
+                                             self.texturepack.name))
+                    self.pacman.texture_stand = 'texturepacks/{}/pacman/pacman_stand.png'.format(
+                                             self.texturepack.name)
+                    self.pacman.texture_eat = 'texturepacks/{}/pacman/pacman_eat.png'.format(
+                        self.texturepack.name)
+                    self.pacman.texture_death = 'texturepacks/{}/pacman/pacman_death.png'.format(
+                        self.texturepack.name)
+                    self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
+                    self.pacman.move(self.map.data)
+                    self.ghosts = list()
+                    self.ghosts.append(Blinky(13 * 16, 11 * 16 + 48 - 8))
+                    self.ghosts.append(Pinky(13 * 16, 14 * 16 + 48 - 8))
+                    self.ghosts.append(Inky(11 * 16, 14 * 16 + 48 - 8))
+                    self.ghosts.append(Clyde(15 * 16, 14 * 16 + 48 - 8))
+                    self.__process_drawing()
+                    pygame.display.flip()
+                    pygame.time.wait(2000)
 
     def check_eaten_grains(self):
         for i in range(31):
