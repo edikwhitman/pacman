@@ -9,7 +9,7 @@ class Ghost(AnimatedCharacter):
         self.name = name
         self.img = "./images/entity/ghosts/" + self.name + "_moving.png"
         self.frightened_img = "./images/entity/ghosts/fear_moving.png"
-        
+
         super().__init__(x, y, self.img, self.get_image_parts(self.img), width, height, True, time)
         self.movement_direction = 0  # 0 - стоит на месте, 1 - движется вверх, 2 - вниз, 3 - влево, 4 - вправо
         self.movement_direction_queue = 0
@@ -48,17 +48,17 @@ class Ghost(AnimatedCharacter):
             self.movement_direction_queue = 0
         elif self.movement_direction_queue == 1 and \
                 ((map[(self.y - 44) // 16][(self.x + 8) // 16] != "0" and self.movement_direction == 4)
-                or (map[(self.y - 44) // 16][(self.x + 22) // 16] != "0" and self.movement_direction == 3)):
+                 or (map[(self.y - 44) // 16][(self.x + 22) // 16] != "0" and self.movement_direction == 3)):
             self.movement_direction = 1
             self.movement_direction_queue = 0
         elif self.movement_direction_queue == 2 and \
                 ((map[(self.y - 10) // 16][(self.x + 8) // 16] != "0" and self.movement_direction == 4)
-                or (map[(self.y - 10) // 16][(self.x + 22) // 16] != "0" and self.movement_direction == 3)):
+                 or (map[(self.y - 10) // 16][(self.x + 22) // 16] != "0" and self.movement_direction == 3)):
             self.movement_direction = 2
             self.movement_direction_queue = 0
 
     def check_collision(self, map):  # Проверка на столкновение со стенами
-        if self.movement_direction == 3 and map[(self.y + 16 - 48) // 16][(self.x+6) // 16] != "0":
+        if self.movement_direction == 3 and map[(self.y + 16 - 48) // 16][(self.x + 6) // 16] != "0":
             self.set_y(self.y // 16 * 16 + 8)
             self.vertical_speed = 0
             self.horisontal_speed = -self.absolute_speed
@@ -118,21 +118,29 @@ class Ghost(AnimatedCharacter):
             pos = self.get_ghost_cell()
             minimum_distance = 1000
             direction = 0
-            if map[pos[1]][pos[0]-1] != '0' and self.get_points_distance((target_position[1], target_position[0]), (pos[1], pos[0] - 1)) <= minimum_distance and self.movement_direction != 4 and self.current_cell != pos:
+            if map[pos[1]][pos[0] - 1] != '0' and self.get_points_distance((target_position[1], target_position[0]), (
+            pos[1], pos[0] - 1)) <= minimum_distance and self.movement_direction != 4 and self.current_cell != pos:
                 direction = 3
-                minimum_distance = self.get_points_distance((target_position[1], target_position[0]), (pos[1], pos[0] - 1))
+                minimum_distance = self.get_points_distance((target_position[1], target_position[0]),
+                                                            (pos[1], pos[0] - 1))
 
-            if map[pos[1]][pos[0]+1] != '0' and self.get_points_distance((target_position[1], target_position[0]), (pos[1], pos[0] + 1)) <= minimum_distance and self.movement_direction != 3 and self.current_cell != pos:
+            if map[pos[1]][pos[0] + 1] != '0' and self.get_points_distance((target_position[1], target_position[0]), (
+            pos[1], pos[0] + 1)) <= minimum_distance and self.movement_direction != 3 and self.current_cell != pos:
                 direction = 4
-                minimum_distance = self.get_points_distance((target_position[1], target_position[0]), (pos[1], pos[0] + 1))
+                minimum_distance = self.get_points_distance((target_position[1], target_position[0]),
+                                                            (pos[1], pos[0] + 1))
 
-            if map[pos[1]+1][pos[0]] != '0' and self.get_points_distance((target_position[1], target_position[0]), (pos[1] + 1, pos[0])) <= minimum_distance and self.movement_direction != 1 and self.current_cell != pos:
+            if map[pos[1] + 1][pos[0]] != '0' and self.get_points_distance((target_position[1], target_position[0]), (
+            pos[1] + 1, pos[0])) <= minimum_distance and self.movement_direction != 1 and self.current_cell != pos:
                 direction = 2
-                minimum_distance = self.get_points_distance((target_position[1], target_position[0]), (pos[1] + 1, pos[0]))
+                minimum_distance = self.get_points_distance((target_position[1], target_position[0]),
+                                                            (pos[1] + 1, pos[0]))
 
-            if map[pos[1]-1][pos[0]] != '0' and self.get_points_distance((target_position[1], target_position[0]), (pos[1] - 1, pos[0])) <= minimum_distance and self.movement_direction != 2 and self.current_cell != pos:
+            if map[pos[1] - 1][pos[0]] != '0' and self.get_points_distance((target_position[1], target_position[0]), (
+            pos[1] - 1, pos[0])) <= minimum_distance and self.movement_direction != 2 and self.current_cell != pos:
                 direction = 1
-                minimum_distance = self.get_points_distance((target_position[1], target_position[0]), (pos[1] - 1, pos[0]))
+                minimum_distance = self.get_points_distance((target_position[1], target_position[0]),
+                                                            (pos[1] - 1, pos[0]))
             if direction > 0:
                 self.current_cell = pos
                 if self.movement_direction == 0:
@@ -152,25 +160,28 @@ class Ghost(AnimatedCharacter):
         if self.inside_ghost_house:
             pos = self.get_ghost_cell()
             if abs((self.ghost_room_exit_point[0] * 16) - self.x) > self.absolute_speed:
-                direct = ((self.ghost_room_exit_point[0] * 16) - self.x) / abs((self.ghost_room_exit_point[0] * 16)
-                                                                               - self.x)
+                direct = ((self.ghost_room_exit_point[0] * 16) - self.x) / abs(
+                    (self.ghost_room_exit_point[0] * 16) - self.x)
                 self.set_x(int(self.x + direct * self.absolute_speed))
                 if direct > 0:
                     self.set_moving_animation(4)
                 else:
                     self.set_moving_animation(3)
-            elif self.y > (self.ghost_room_exit_point[1]-1) * 16+10:
+            elif self.y > (self.ghost_room_exit_point[1] - 1) * 16 + 10:
                 self.set_y(self.y - self.absolute_speed)
                 self.set_x((self.ghost_room_exit_point[0] * 16))
                 self.set_moving_animation(1)
             else:
                 self.inside_ghost_house = False
+                if self.ghost_status == 2:
+                    self.movement_direction = 1
+                    self.set_frightened_mode(map)
 
     def set_scatter_mode(self, map):
         self.set_chase_mode(map, self.scatter_point)
 
-    def set_frightened_mode(self, map):
-        self.set_frightened_img(True)
+    def set_frightened_mode(self, map, blink = False):
+        self.set_frightened_img(blink)
         self.set_chase_mode(map, (random.randint(0, 50), random.randint(0, 50)))
 
     def set_frightened_img(self, blink=False):
@@ -188,7 +199,7 @@ class Ghost(AnimatedCharacter):
             self.ghost_status = 0
 
     def get_points_distance(self, p1, p2):
-        return ((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)**0.5
+        return ((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2) ** 0.5
 
 
 class Blinky(Ghost):  # Красный
@@ -203,13 +214,13 @@ class Pinky(Ghost):  # Розовый
 
     def set_pinky_chase_mode(self, map, target_position, target_direction):
         if target_direction == 1:
-            self.set_chase_mode(map, (target_position[0], target_position[1]-4))
+            self.set_chase_mode(map, (target_position[0], target_position[1] - 4))
         elif target_direction == 2:
-            self.set_chase_mode(map, (target_position[0], target_position[1]+4))
+            self.set_chase_mode(map, (target_position[0], target_position[1] + 4))
         elif target_direction == 3:
-            self.set_chase_mode(map, (target_position[0]-4, target_position[1]))
+            self.set_chase_mode(map, (target_position[0] - 4, target_position[1]))
         elif target_direction == 4:
-            self.set_chase_mode(map, (target_position[0]+4, target_position[1]))
+            self.set_chase_mode(map, (target_position[0] + 4, target_position[1]))
         elif target_direction == 0:
             self.set_chase_mode(map, (target_position[0], target_position[1]))
 
@@ -220,17 +231,18 @@ class Inky(Ghost):  # Голубой
 
     def set_inky_chase_mode(self, map, target_position, target_direction, blinky_position):
         if target_direction == 1:
-            target = (target_position[0], target_position[1]-2)
+            target = (target_position[0], target_position[1] - 2)
         elif target_direction == 2:
-            target = (target_position[0], target_position[1]+2)
+            target = (target_position[0], target_position[1] + 2)
         elif target_direction == 3:
-            target = (target_position[0]-2, target_position[1])
+            target = (target_position[0] - 2, target_position[1])
         elif target_direction == 4:
-            target = (target_position[0]+2, target_position[1])
+            target = (target_position[0] + 2, target_position[1])
         elif target_direction == 0:
             target = (target_position[0], target_position[1])
 
-        target = (blinky_position[0] + (target_position[0] - blinky_position[0]) * 2, blinky_position[1] + (target_position[1] - blinky_position[1]) * 2)
+        target = (blinky_position[0] + (target_position[0] - blinky_position[0]) * 2,
+                  blinky_position[1] + (target_position[1] - blinky_position[1]) * 2)
         self.set_chase_mode(map, (target[0], target[1]))
 
 

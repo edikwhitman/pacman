@@ -179,6 +179,7 @@ class Game:
         self.__set_textures()
         # Установка стартовой позиции пакмана
         self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
+        self.level = LevelManagement()
 
         # установка остальных необходимых значений
 
@@ -233,6 +234,7 @@ class Game:
                         self.map.data[i][j] = '4'
                         self.score += 50
                         self.sum_of_eaten_grains += 1
+                        self.level.frightened(self.map.data, self.pacman, self.ghosts, self.score)
 
     def __set_textures(self):
         # grains
