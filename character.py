@@ -91,10 +91,9 @@ class AnimatedCharacter(Character):  # Анимированный персона
                     self.end = True
 
     def get_sprite(self):  # Вернуть спрайт
-        print(self.frame)
         try:
             return self.sprites[self.frame]
-        except: return self.sprites[self.frame - 2]
+        except: return self.sprites[0]
 
     def set_animation(self, img_src, sprites_cnt, loop=True, time=1):  # Задать изображение со спрайтами
         self.img_src = pygame.image.load(img_src)

@@ -188,7 +188,10 @@ class Game:
 
     def check_pacman_ghost_collision(self):
         for ghost in self.ghosts:
-            if ghost.ghost_status != 2 and ghost.rect.colliderect(self.pacman.rect):
+            if ghost.ghost_status < 2 and ghost.rect.colliderect(self.pacman.rect):
+                self.pacman.rect = None
+                for ghost in self.ghosts:
+                    ghost.rect = None
                 self.lives -= 1
                 self.pacman.set_death_animation()
                 self.pacman.movement_direction = 0
@@ -220,6 +223,8 @@ class Game:
                     self.__process_drawing()
                     pygame.display.flip()
                     pygame.time.wait(2000)
+            elif ghost.rect.colliderect(self.pacman.rect):
+                ghost.return_to_ghost_room(self.map.data)
 
     def check_eaten_grains(self):
         for i in range(31):

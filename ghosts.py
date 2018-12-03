@@ -11,21 +11,27 @@ class Ghost(AnimatedCharacter):
         self.frightened_img = "./images/entity/ghosts/fear_moving.png"
 
         super().__init__(x, y, self.img, self.get_image_parts(self.img), width, height, True, time)
+        self.start_x = x
+        self.start_y = y
+        self.returning_room = False
         self.movement_direction = 0  # 0 - стоит на месте, 1 - движется вверх, 2 - вниз, 3 - влево, 4 - вправо
         self.movement_direction_queue = 0
         self.animation_status = 0  # 0 - есть, 1 - анимация смерти, 2 - стоять
         self.vertical_speed = 0
         self.horisontal_speed = 0
-        self.absolute_speed = 2
+        self.normal_speed = 2
+        self.frightened_speed = 1
+        self.absolute_speed = self.normal_speed
+        self.returning_speed = 4
         self.current_cell = list
         self.ghost_room_exit_point = ghost_room_exit_point
-        self.ghost_status = 0  # 0 - режим преследования, 1 - режим разбегания, 2 - режим страха
+        self.ghost_status = 0  # 0 - режим преследования, 1 - режим разбегания, 2 - режим страха, 3 - режим возвращения домой
         self.set_split_sprites_range(5, 6)
         self.inside_ghost_house = True
         self.scatter_point = scatter_point
 
     def set_moving_animation(self, direction):
-        if self.ghost_status == 0:
+        if self.ghost_status < 2:
             if direction == 1:
                 self.movement_direction = 1
                 self.set_split_sprites_range(5, 6)
@@ -39,11 +45,24 @@ class Ghost(AnimatedCharacter):
                 self.movement_direction = 4
                 self.set_split_sprites_range(1, 2)
 
+        if self.ghost_status == 3:
+            if direction == 1:
+                self.set_split_sprites_range(3, 3)
+            if direction == 2:
+                self.movement_direction = 2
+                self.set_split_sprites_range(4, 4)
+            if direction == 3:
+                self.movement_direction = 3
+                self.set_split_sprites_range(2, 2)
+            if direction == 4:
+                self.movement_direction = 4
+                self.set_split_sprites_range(1, 1)
+
     def change_direction(self, map):  # Проверка на возможность поворота
-        if self.movement_direction_queue == 3 and map[(self.y + 22 - 48) // 16][(self.x - 2) // 16] != "0":
+        if self.movement_direction_queue == 3 and map[(self.y + 8 - 48) // 16][(self.x - 2) // 16] != "0":
             self.movement_direction = 3
             self.movement_direction_queue = 0
-        elif self.movement_direction_queue == 4 and map[(self.y + 22 - 48) // 16][(self.x + 34) // 16] != "0":
+        elif self.movement_direction_queue == 4 and map[(self.y + 8 - 48) // 16][(self.x + 34) // 16] != "0":
             self.movement_direction = 4
             self.movement_direction_queue = 0
         elif self.movement_direction_queue == 1 and \
@@ -159,7 +178,7 @@ class Ghost(AnimatedCharacter):
     def ghost_room_exit(self, map):
         if self.inside_ghost_house:
             pos = self.get_ghost_cell()
-            if abs((self.ghost_room_exit_point[0] * 16) - self.x) > self.absolute_speed:
+            if abs((self.ghost_room_exit_point[0] * 16) - self.x) >= self.absolute_speed:
                 direct = ((self.ghost_room_exit_point[0] * 16) - self.x) / abs(
                     (self.ghost_room_exit_point[0] * 16) - self.x)
                 self.set_x(int(self.x + direct * self.absolute_speed))
@@ -173,9 +192,31 @@ class Ghost(AnimatedCharacter):
                 self.set_moving_animation(1)
             else:
                 self.inside_ghost_house = False
+                self.movement_direction = 1
                 if self.ghost_status == 2:
                     self.movement_direction = 1
                     self.set_frightened_mode(map)
+
+    def ghost_room_enter(self, map):
+        pos = self.get_ghost_cell()
+        if self.y < self.start_y:
+            self.set_y(self.y + self.absolute_speed)
+            self.set_x((self.ghost_room_exit_point[0] * 16))
+            self.set_moving_animation(2)
+        elif abs(self.start_x - self.x) >= self.absolute_speed:
+            direct = (self.start_x - self.x) / abs(self.start_x - self.x)
+            self.set_x(int(self.x + direct * self.absolute_speed))
+            if direct > 0:
+                self.set_moving_animation(4)
+            else:
+                self.set_moving_animation(3)
+        else:
+            self.inside_ghost_house = True
+            self.returning_room = False
+            self.set_scatter_img()
+            self.ghost_status = 1
+            self.move(map)
+            self.movement_direction == 1
 
     def set_scatter_mode(self, map):
         self.set_chase_mode(map, self.scatter_point)
@@ -185,7 +226,7 @@ class Ghost(AnimatedCharacter):
         self.set_chase_mode(map, (random.randint(0, 50), random.randint(0, 50)))
 
     def set_frightened_img(self, blink=False):
-        if self.ghost_status != 2:
+        if self.ghost_status < 2:
             self.set_animation(self.frightened_img, self.get_image_parts(self.frightened_img), True, self.time)
         if blink:
             self.set_split_sprites_range(5, 8)
@@ -200,6 +241,22 @@ class Ghost(AnimatedCharacter):
 
     def get_points_distance(self, p1, p2):
         return ((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2) ** 0.5
+
+    def return_to_ghost_room(self, map):
+        self.absolute_speed = self.returning_speed
+        if self.returning_room:
+            self.absolute_speed = self.normal_speed
+            self.movement_direction = 0
+            self.ghost_room_enter(map)
+
+        else:
+            self.set_chase_mode(map, self.ghost_room_exit_point)
+            if self.ghost_status != 3:
+                self.set_frightened_img()
+            self.ghost_status = 3
+            if self.y == 216 and abs(self.x - 208) < self.absolute_speed:
+                self.returning_room = True
+
 
 
 class Blinky(Ghost):  # Красный
