@@ -17,6 +17,8 @@ class Game:
         self.ghosts = list()
         self.grain_img = None
         self.big_grain_img = None
+        self.cherry_img = None
+        self.strawberry_img = None
         self.big_grain_draw = True  # Отображаем большое зерно или нет. Чтобы мигание делать
         self.sum_of_eaten_grains = 0  # Счетчик съеденных зерен, нужен для последующего отображения вишен
         self.counter = 1  # Счетчик прохода по game_loop, нужен как таймер
@@ -118,6 +120,12 @@ class Game:
         hs_rect = hs.get_rect(topleft=(16 * 14, 20))
         self.screen.blit(hs, hs_rect)
 
+        # 6. fruits
+        if self.sum_of_eaten_grains == 70:
+            self.screen.blit(self.cherry_img, (self.fruit_spawn))
+        if self.sum_of_eaten_grains == 170:
+            self.screen.blit(self.strawberry_img, (self.fruit_spawn))
+
         # Жизни
         live_pacman = pygame.image.load('./texturepacks/{}/pacman/pacman_stand.png'.format(self.texturepack.name))
         live_pacman = pygame.transform.rotate(live_pacman, 90)
@@ -137,7 +145,7 @@ class Game:
 
     def __reset_grains(self):
         for i in range(31):
-            for j in range(28):
+            for j in range(28):self.fruit_spawn = (13, 17)
                 if self.map.data[i][j] == '2':
                     self.map.data[i][j] = '1'
                 elif self.map.data[i][j] == '4':
@@ -242,6 +250,8 @@ class Game:
         self.pacman.texture_stand = 'texturepacks/{}/pacman/pacman_stand.png'.format(self.texturepack.name)
         self.pacman.texture_death = 'texturepacks/{}/pacman/pacman_death.png'.format(self.texturepack.name)
         self.pacman.texture_eat = 'texturepacks/{}/pacman/pacman_eat.png'.format(self.texturepack.name)
+        self.cherry_img = pygame.image.load('texturepacks/{}/fruits/cherry.png'.format(self.texturepack.name))
+        self.strawberry_img = pygame.image.load('texturepacks/{}/fruits/strawberry.png'.format(self.texturepack.name))
 
     def change_level(self):
         if self.map.name == 'Classic':
