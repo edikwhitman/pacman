@@ -5,10 +5,10 @@ import pygame
 
 
 class Ghost(AnimatedCharacter):
-    def __init__(self, x, y, name, scatter_point=(0, 0), width=32, height=32, ghost_room_exit_point=(13, 14), time=8):
+    def __init__(self, x, y, name, scatter_point=(0, 0), texture='Classic', width=32, height=32, ghost_room_exit_point=(13, 14), time=8):
         self.name = name
-        self.img = "./images/entity/ghosts/" + self.name + "_moving.png"
-        self.frightened_img = "./images/entity/ghosts/fear_moving.png"
+        self.img = "./texturepacks/" + texture + "/ghosts/" + self.name + "_moving.png"
+        self.frightened_img = "./texturepacks/" + texture + "/ghosts/fear_moving.png"
         
         super().__init__(x, y, self.img, self.get_image_parts(self.img), width, height, True, time)
         self.movement_direction = 0  # 0 - стоит на месте, 1 - движется вверх, 2 - вниз, 3 - влево, 4 - вправо
@@ -192,14 +192,14 @@ class Ghost(AnimatedCharacter):
 
 
 class Blinky(Ghost):  # Красный
-    def __init__(self, x, y):
-        super().__init__(x, y, "blinky", (30, -30))
+    def __init__(self, x, y, texture):
+        super().__init__(x, y, "blinky", (30, -30), texture)
         self.inside_ghost_house = False
 
 
 class Pinky(Ghost):  # Розовый
-    def __init__(self, x, y):
-        super().__init__(x, y, "pinky", (0, 0))
+    def __init__(self, x, y, texture):
+        super().__init__(x, y, "pinky", (0, 0), texture)
 
     def set_pinky_chase_mode(self, map, target_position, target_direction):
         if target_direction == 1:
@@ -215,8 +215,8 @@ class Pinky(Ghost):  # Розовый
 
 
 class Inky(Ghost):  # Голубой
-    def __init__(self, x, y):
-        super().__init__(x, y, "inky", (30, 30))
+    def __init__(self, x, y, texture):
+        super().__init__(x, y, "inky", (30, 30), texture)
 
     def set_inky_chase_mode(self, map, target_position, target_direction, blinky_position):
         if target_direction == 1:
@@ -235,8 +235,8 @@ class Inky(Ghost):  # Голубой
 
 
 class Clyde(Ghost):  # Оранжевый
-    def __init__(self, x, y):
-        super().__init__(x, y, "clyde", (0, 30))
+    def __init__(self, x, y, texture):
+        super().__init__(x, y, "clyde", (0, 30), texture)
 
     def set_clyde_chase_mode(self, map, target_position):
         if self.get_points_distance(self.get_ghost_cell(), target_position) > 8:

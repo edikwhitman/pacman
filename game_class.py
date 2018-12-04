@@ -15,10 +15,6 @@ class Game:
         self.pacman = None
         self.level = LevelManagement()
         self.ghosts = list()
-        self.ghosts.append(Blinky(13 * 16, 11 * 16 + 48 - 8))
-        self.ghosts.append(Pinky(13 * 16, 14 * 16 + 48 - 8))
-        self.ghosts.append(Inky(11 * 16, 14 * 16 + 48 - 8))
-        self.ghosts.append(Clyde(15 * 16, 14 * 16 + 48 - 8))
         self.grain_img = None
         self.big_grain_img = None
         self.big_grain_draw = True  # Отображаем большое зерно или нет. Чтобы мигание делать
@@ -181,6 +177,10 @@ class Game:
         self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
 
         # установка остальных необходимых значений
+        self.ghosts.append(Blinky(13 * 16, 11 * 16 + 48 - 8, self.texturepack.name))
+        self.ghosts.append(Pinky(13 * 16, 14 * 16 + 48 - 8, self.texturepack.name))
+        self.ghosts.append(Inky(11 * 16, 14 * 16 + 48 - 8, self.texturepack.name))
+        self.ghosts.append(Clyde(15 * 16, 14 * 16 + 48 - 8, self.texturepack.name))
 
     def get_pacman_cell(self):  # Возвращает клетку, в которой находится пакман сейчас в виде колонка, строка
         return (self.pacman.x + 16) // 16, (self.pacman.y - 40) // 16
@@ -292,9 +292,9 @@ class Game:
         self.pacman.movement_direction = 0
         self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
         self.ghosts = list()
-        self.ghosts.append(Blinky(13 * 16, 11 * 16 + 48 - 8))
-        self.ghosts.append(Pinky(13 * 16, 14 * 16 + 48 - 8))
-        self.ghosts.append(Inky(11 * 16, 14 * 16 + 48 - 8))
-        self.ghosts.append(Clyde(15 * 16, 14 * 16 + 48 - 8))
+        self.ghosts.append(Blinky(13 * 16, 11 * 16 + 48 - 8, self.texturepack.name))
+        self.ghosts.append(Pinky(13 * 16, 14 * 16 + 48 - 8, self.texturepack.name))
+        self.ghosts.append(Inky(11 * 16, 14 * 16 + 48 - 8, self.texturepack.name))
+        self.ghosts.append(Clyde(15 * 16, 14 * 16 + 48 - 8, self.texturepack.name))
         self.sum_of_eaten_grains = 0
         self.level.level += 1
