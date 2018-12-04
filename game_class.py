@@ -121,9 +121,9 @@ class Game:
         self.screen.blit(hs, hs_rect)
 
         # 6. fruits
-        if self.sum_of_eaten_grains == 70:
+        if self.sum_of_eaten_grains >= 70:
             self.screen.blit(self.cherry_img, self.fruit_spawn)
-        if self.sum_of_eaten_grains == 170:
+        if self.sum_of_eaten_grains >= 170:
             self.screen.blit(self.strawberry_img, self.fruit_spawn)
 
         # Жизни
