@@ -122,9 +122,9 @@ class Game:
 
         # 6. fruits
         if self.sum_of_eaten_grains == 70:
-            self.screen.blit(self.cherry_img, (self.fruit_spawn))
+            self.screen.blit(self.cherry_img, self.fruit_spawn)
         if self.sum_of_eaten_grains == 170:
-            self.screen.blit(self.strawberry_img, (self.fruit_spawn))
+            self.screen.blit(self.strawberry_img, self.fruit_spawn)
 
         # Жизни
         live_pacman = pygame.image.load('./texturepacks/{}/pacman/pacman_stand.png'.format(self.texturepack.name))
@@ -145,7 +145,7 @@ class Game:
 
     def __reset_grains(self):
         for i in range(31):
-            for j in range(28):self.fruit_spawn = (13, 17)
+            for j in range(28):
                 if self.map.data[i][j] == '2':
                     self.map.data[i][j] = '1'
                 elif self.map.data[i][j] == '4':
