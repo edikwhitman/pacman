@@ -42,7 +42,8 @@ class Game:
         self.__process_logic()
         self.__process_drawing()
         pygame.display.flip()
-        pygame.time.wait(3000)
+        self.sounds['start_music'].play()
+        pygame.time.wait(4500)
 
         while self.game_loop_run:
             if self.__check_event() == 1:
@@ -205,6 +206,8 @@ class Game:
                 self.pacman.movement_direction = 0
                 for g in self.ghosts:
                     g.movement_direction = 0
+                self.sounds['death'].set_volume(0.5)
+                self.sounds['death'].play()
                 for i in range(90):
                     self.__process_drawing()
                     pygame.display.flip()
