@@ -8,6 +8,7 @@ from after_game_menu import Gameover
 def main():
     pygame.init()
     pygame.font.init()
+    pygame.mixer.init()
     screen = pygame.display.set_mode(SIZE)
     pygame.display.set_caption('PAC-MAN')
     response = None

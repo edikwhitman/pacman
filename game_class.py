@@ -34,6 +34,7 @@ class Game:
         self.score = 0
         self.texturepack = None  # Текущий текстурпак (экземпляр класса Texturepack)
         self.lives = 3
+        self.sounds = dict()
 
     def main_loop(self):
         print('game loop run')
@@ -177,10 +178,21 @@ class Game:
         self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
 
         # установка остальных необходимых значений
+
+        # привидения
         self.ghosts.append(Blinky(13 * 16, 11 * 16 + 48 - 8, self.texturepack.name))
         self.ghosts.append(Pinky(13 * 16, 14 * 16 + 48 - 8, self.texturepack.name))
         self.ghosts.append(Inky(11 * 16, 14 * 16 + 48 - 8, self.texturepack.name))
         self.ghosts.append(Clyde(15 * 16, 14 * 16 + 48 - 8, self.texturepack.name))
+
+        # звуки
+
+        self.sounds['dot1'] = pygame.mixer.Sound('./sounds/dot1.wav')
+        self.sounds['dot2'] = pygame.mixer.Sound('./sounds/dot2.wav')
+        self.sounds['fruit'] = pygame.mixer.Sound('./sounds/fruit.wav')
+        self.sounds['death'] = pygame.mixer.Sound('./sounds/death.wav')
+        self.sounds['start_music'] = pygame.mixer.Sound('./sounds/start_music.wav')
+        self.sounds['eating_ghost'] = pygame.mixer.Sound('./sounds/eating_ghost.wav')
 
     def get_pacman_cell(self):  # Возвращает клетку, в которой находится пакман сейчас в виде колонка, строка
         return (self.pacman.x + 16) // 16, (self.pacman.y - 40) // 16
@@ -229,6 +241,13 @@ class Game:
                         self.map.data[i][j] = '2'
                         self.score += 10
                         self.sum_of_eaten_grains += 1
+
+                        if self.sum_of_eaten_grains % 2 == 0:
+                            self.sounds['dot2'].stop()
+                            self.sounds['dot1'].play()
+                        else:
+                            self.sounds['dot1'].stop()
+                            self.sounds['dot2'].play()
                     elif char == '3':
                         self.map.data[i][j] = '4'
                         self.score += 50
