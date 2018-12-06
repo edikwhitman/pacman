@@ -18,7 +18,7 @@ class Game:
         self.grain_img = None
         self.big_grain_img = None
         self.big_grain_draw = True  # Отображаем большое зерно или нет. Чтобы мигание делать
-        self.sum_of_eaten_grains = 270  # Счетчик съеденных зерен, нужен для последующего отображения вишен
+        self.sum_of_eaten_grains = 0  # Счетчик съеденных зерен, нужен для последующего отображения вишен
         self.counter = 1  # Счетчик прохода по game_loop, нужен как таймер
         self.up_draw = True
         self.map = None  # Экземпляр класса карты, map.data - карта в виде символов:
