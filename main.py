@@ -12,16 +12,17 @@ def main():
     screen = pygame.display.set_mode(SIZE)
     pygame.display.set_caption('PAC-MAN')
     response = None
+    texturepack = None  # Номер текстурпака, нужен, чтоб при restart не сбрасывался
 
     while True:
-        menu = StartMenu(screen)
+        menu = StartMenu(screen, texturepack)
         game = Game(screen)
         if response != 1:
             menu.main_loop()  # Основной цикл меню
 
         game.set_start_params(menu.get_map_and_textures())  # Получение карты для игры из класса menu
 
-        game.main_loop()  # Основной цикл игры
+        texturepack = game.main_loop()  # Основной цикл игры
 
         after_game = Gameover(game.score, screen)  # Сцена послеигрового меню
         response = after_game.main_loop()

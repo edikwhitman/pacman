@@ -206,7 +206,7 @@ class TexturesMenu:
 
 # -------------------------------------------------------- StartMenu
 class StartMenu:
-    def __init__(self, screen):
+    def __init__(self, screen, texturepack):
         self.screen = screen  # Плоскость отрисовки
 
         self.main_menu_loop_run = False  # Переменная работы основного цикла
@@ -226,7 +226,7 @@ class StartMenu:
 
         self.texturepacks = []              # Массив текстурпаков
         self.__number_of_texturepacks = 0   # Сколько всего текстурпаков
-        self.__texturepack_num = 0          # Номер текущего текстурпака
+        self.__texturepack_num = 0 if texturepack is None else texturepack          # Номер текущего текстурпака
         self.__load_texturepacks()          # Подгрузка текстурпаков
 
         self.start_menu_image = pygame.image.load("images/ui/main_menu.png")  # Фон основного меню
@@ -353,6 +353,7 @@ class StartMenu:
     def get_map_and_textures(self):  # Подготавливает map и texturepack и возвращает их
         self.maps[self.__map_num].reload_data()
         self.maps[self.__map_num].load_img()
+
         return self.maps[self.__map_num], self.texturepacks[self.__texturepack_num]
 
     def __load_maps(self):  # Выгрузка карт в память

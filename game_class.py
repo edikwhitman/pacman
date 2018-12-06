@@ -57,6 +57,14 @@ class Game:
         self.map.add_new_score(self.score)
         self.map.write_scores()
         print('game loop stop')
+        if self.texturepack.name == 'Classic':
+            return 0
+        elif self.texturepack.name == 'Police':
+            return 1
+        elif self.texturepack.name == 'NotClassic':
+            return 2
+        else:
+            return None
 
     def __process_logic(self):
         self.pacman.move(self.map.data)
