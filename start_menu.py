@@ -58,6 +58,7 @@ class Texturepack:
     def __init__(self, name):
         self.name = name
         self.preview_img = pygame.image.load("texturepacks/{}/preview.png".format(name))
+        self.number = 0
 
 
 # -------------------------------------------------------- ScoresMenu
@@ -371,8 +372,11 @@ class StartMenu:
 
     def __load_texturepacks(self):  # Выгрузка текстурпаков в память
         files = os.listdir('texturepacks')
+        i = 0
         for texturepack in files:
             self.texturepacks.append(Texturepack(texturepack))
+            self.texturepacks[i].number = i
+            i += 1
         self.__number_of_texturepacks = len(self.texturepacks)
 
     def __switch_texturepack(self, num):  # Cмена номера текстурапка на num
