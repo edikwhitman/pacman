@@ -18,7 +18,7 @@ class Game:
         self.grain_img = None
         self.big_grain_img = None
         self.big_grain_draw = True  # Отображаем большое зерно или нет. Чтобы мигание делать
-        self.sum_of_eaten_grains = 0  # Счетчик съеденных зерен, нужен для последующего отображения вишен
+        self.sum_of_eaten_grains = 270  # Счетчик съеденных зерен, нужен для последующего отображения вишен
         self.counter = 1  # Счетчик прохода по game_loop, нужен как таймер
         self.up_draw = True
         self.map = None  # Экземпляр класса карты, map.data - карта в виде символов:
@@ -266,49 +266,47 @@ class Game:
         self.pacman.texture_eat = 'texturepacks/{}/pacman/pacman_eat.png'.format(self.texturepack.name)
 
     def change_level(self):
-        if self.map.name == 'Classic':
-            for i in range(8):
-                self.screen.fill(BLACK)
-                # Очередь отрисовки:
+        for i in range(8):
+            self.screen.fill(BLACK)
+            # Очередь отрисовки:
 
-                # 1. изображение карты map_img.png
-                if i % 2 == 0:
-                    self.screen.blit(self.map.img, (0, 48))
-                else:
-                    self.screen.blit(pygame.image.load('./maps/Classic/map_img_blink.png'), (0, 48))
+            # 1. изображение карты map_img.png
+            if i % 2 == 0:
+                self.screen.blit(self.map.img, (0, 48))
+            else:
+                self.screen.blit(pygame.image.load('./maps/{}/map_img_blink.png'.format(self.map.name)), (0, 48))
 
-                # 3. pac man
-                self.pacman.draw(self.screen)
+            # 3. pac man
+            self.pacman.draw(self.screen)
 
-                # 5. scores
-                font = pygame.font.Font('font.ttf', 25)
-                up = font.render('1UP', True, WHITE)  # Надпись над текущим счетом
-                up_rect = up.get_rect(topleft=(16 * 2, 0))
-                self.screen.blit(up, up_rect)
+            # 5. scores
+            font = pygame.font.Font('font.ttf', 25)
+            up = font.render('1UP', True, WHITE)  # Надпись над текущим счетом
+            up_rect = up.get_rect(topleft=(16 * 2, 0))
+            self.screen.blit(up, up_rect)
 
-                score_now = font.render(str(self.score), True, WHITE)  # Текущий счет
-                sc_rect = score_now.get_rect(topleft=(16 * 3, 20))
-                self.screen.blit(score_now, sc_rect)
+            score_now = font.render(str(self.score), True, WHITE)  # Текущий счет
+            sc_rect = score_now.get_rect(topleft=(16 * 3, 20))
+            self.screen.blit(score_now, sc_rect)
 
-                hs_txt = font.render('HIGH SCORE', True, WHITE)  # Надпись над наибольшим счетом
-                hs_txt_rect = hs_txt.get_rect(topleft=(16 * 9, 0))
-                self.screen.blit(hs_txt, hs_txt_rect)
-                if not self.map.scores:
-                    hs = font.render(str(self.score), True, WHITE)  # Наибольший счет
-                else:
-                    hs = font.render(str(self.map.scores[0]) if self.map.scores[0] > self.score else str(self.score),
-                                     True, WHITE)  # Наибольший счет
-                hs_rect = hs.get_rect(topleft=(16 * 14, 20))
-                self.screen.blit(hs, hs_rect)
+            hs_txt = font.render('HIGH SCORE', True, WHITE)  # Надпись над наибольшим счетом
+            hs_txt_rect = hs_txt.get_rect(topleft=(16 * 9, 0))
+            self.screen.blit(hs_txt, hs_txt_rect)
+            if not self.map.scores:
+                hs = font.render(str(self.score), True, WHITE)  # Наибольший счет
+            else:
+                hs = font.render(str(self.map.scores[0]) if self.map.scores[0] > self.score else str(self.score),
+                                 True, WHITE)  # Наибольший счет
+            hs_rect = hs.get_rect(topleft=(16 * 14, 20))
+            self.screen.blit(hs, hs_rect)
 
-                # Жизни
-                live_pacman = pygame.image.load(
-                    './texturepacks/{}/pacman/pacman_stand.png'.format(self.texturepack.name))
-                live_pacman = pygame.transform.rotate(live_pacman, 90)
-                for j in range(self.lives):
-                    self.screen.blit(live_pacman, (16 * 2 * (j + 1) + 5 * j, 34 * 16))
-                pygame.display.flip()
-                pygame.time.wait(500)
+            # Жизни
+            live_pacman = pygame.image.load('./texturepacks/{}/pacman/pacman_stand.png'.format(self.texturepack.name))
+            live_pacman = pygame.transform.rotate(live_pacman, 90)
+            for j in range(self.lives):
+                self.screen.blit(live_pacman, (16 * 2 * (j + 1) + 5 * j, 34 * 16))
+            pygame.display.flip()
+            pygame.time.wait(500)
 
         self.__reset_grains()
         self.pacman.movement_direction = 0
