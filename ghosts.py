@@ -5,32 +5,32 @@ import pygame
 
 
 class Ghost(AnimatedCharacter):
-    def __init__(self, x, y, name, scatter_point=(0, 0), width=32, height=32, ghost_room_exit_point=(13, 14), time=8):
-        self.name = name
-        self.img = "./images/entity/ghosts/" + self.name + "_moving.png"
-        self.frightened_img = "./images/entity/ghosts/fear_moving.png"
+    def __init__(self, x, y, name, scatter_point=(0, 0), width=32, height=32, time=8, ghost_room_exit_point=(13, 14)):
+        self.name = name  # Имя призрака
+        self.main_img = "./images/entity/ghosts/" + self.name + "_moving.png" # Текстура призраков в состоянии преследования
+        self.frightened_img = "./images/entity/ghosts/fear_moving.png"  # Текстура призраков в состоянии страха
 
-        super().__init__(x, y, self.img, self.get_image_parts(self.img), width, height, True, time)
-        self.start_x = x
-        self.start_y = y
-        self.returning_room = False
+        super().__init__(x, y, self.main_img, self.get_image_parts(self.main_img), width, height, True, time)
+        self.start_x = x # Начальная позиция X
+        self.start_y = y # Начальная позиция Y
+        self.returning_room = False # Переменная, отвечающая за возврат призраков домой
         self.movement_direction = 0  # 0 - стоит на месте, 1 - движется вверх, 2 - вниз, 3 - влево, 4 - вправо
-        self.movement_direction_queue = 0
-        self.animation_status = 0  # 0 - есть, 1 - анимация смерти, 2 - стоять
-        self.vertical_speed = 0
-        self.horisontal_speed = 0
-        self.normal_speed = 2
-        self.frightened_speed = 1
-        self.absolute_speed = self.normal_speed
-        self.returning_speed = 4
-        self.current_cell = list
-        self.ghost_room_exit_point = ghost_room_exit_point
+        self.movement_direction_queue = 0 # Очередь поворота
+        self.vertical_speed = 0 # Вертикальная скорость
+        self.horisontal_speed = 0 # Горизонтальная скорость
+        self.normal_speed = 2 # Обычная скорость
+        self.frightened_speed = 1 # Скорость при движении в состоянии испуга
+        self.absolute_speed = self.normal_speed  # Абсолютная скорость
+        self.returning_speed = 4 # Скорость при возврате домой
+        self.current_cell = list # Ячейка в двумерном массиве, где находится призрак
+        self.ghost_room_exit_point = ghost_room_exit_point # Координата точки выхода из дома
         self.ghost_status = 0  # 0 - режим преследования, 1 - режим разбегания, 2 - режим страха, 3 - режим возвращения домой
-        self.set_split_sprites_range(5, 6)
-        self.inside_ghost_house = True
-        self.scatter_point = scatter_point
+        self.inside_ghost_house = True # Переменная, отвечающая за нахождение призрака внутри дома
+        self.scatter_point = scatter_point # Точка, к которой стремится призрак во время разбегания
+        self.inside_room_moving_direction = 1 # Движение внутри дома. 1 - вверх, -1 - вниз
+        self.inside_room_start_moving = False # Начинал ли призрак двигаться
 
-    def set_moving_animation(self, direction):
+    def set_moving_animation(self, direction): # Изменить текстуру направления призрака
         if self.ghost_status < 2:
             if direction == 1:
                 self.movement_direction = 1
@@ -44,7 +44,6 @@ class Ghost(AnimatedCharacter):
             if direction == 4:
                 self.movement_direction = 4
                 self.set_split_sprites_range(1, 2)
-
         if self.ghost_status == 3:
             if direction == 1:
                 self.set_split_sprites_range(3, 3)
@@ -94,18 +93,6 @@ class Ghost(AnimatedCharacter):
             self.vertical_speed = self.absolute_speed
             self.horisontal_speed = 0
 
-    def check_event(self, event):  # Проверка событий
-        if self.ghost_status == 0:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w or event.key == pygame.K_UP:  # Идти вверх
-                    self.movement_direction = 1
-                elif event.key == pygame.K_a or event.key == pygame.K_LEFT:  # Идти влево
-                    self.movement_direction = 3
-                elif event.key == pygame.K_s or event.key == pygame.K_DOWN:  # Идти вниз
-                    self.movement_direction = 2
-                elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:  # Идти вправо
-                    self.movement_direction = 4
-
     def position_logic(self):  # Изменение положения пакмана с учётом телепортов
         if self.x > 448:
             self.set_position(-self.width, self.y + self.vertical_speed)
@@ -130,36 +117,39 @@ class Ghost(AnimatedCharacter):
             self.position_logic()
             self.set_moving_animation(self.movement_direction)
         else:
+            self.inside_room_start_moving = True
             self.ghost_room_exit(map)
 
-    def set_chase_mode(self, map, target_position):
+    def set_chase_mode(self, map, target_position): # Двигаться к точке target_position
         try:
-            pos = self.get_ghost_cell()
-            minimum_distance = 1000
+            pos = self.get_ghost_cell()  #Текущая позиция призрака
+            minimum_distance = 1000 # Переменная, которая участвует в поиске наиименьшего пути до цели
             direction = 0
             if map[pos[1]][pos[0] - 1] != '0' and self.get_points_distance((target_position[1], target_position[0]), (
-            pos[1], pos[0] - 1)) <= minimum_distance and self.movement_direction != 4 and self.current_cell != pos:
+            pos[1], pos[0] - 1)) <= minimum_distance and self.movement_direction != 4 and self.current_cell != pos: # Возможность поворота в левую сторону
                 direction = 3
                 minimum_distance = self.get_points_distance((target_position[1], target_position[0]),
                                                             (pos[1], pos[0] - 1))
 
             if map[pos[1]][pos[0] + 1] != '0' and self.get_points_distance((target_position[1], target_position[0]), (
-            pos[1], pos[0] + 1)) <= minimum_distance and self.movement_direction != 3 and self.current_cell != pos:
+            pos[1], pos[0] + 1)) <= minimum_distance and self.movement_direction != 3 and self.current_cell != pos: # Возможность поворота в правую сторону
                 direction = 4
                 minimum_distance = self.get_points_distance((target_position[1], target_position[0]),
                                                             (pos[1], pos[0] + 1))
 
             if map[pos[1] + 1][pos[0]] != '0' and self.get_points_distance((target_position[1], target_position[0]), (
-            pos[1] + 1, pos[0])) <= minimum_distance and self.movement_direction != 1 and self.current_cell != pos:
+            pos[1] + 1, pos[0])) <= minimum_distance and self.movement_direction != 1 and self.current_cell != pos: # Возможность поворота вниз
                 direction = 2
                 minimum_distance = self.get_points_distance((target_position[1], target_position[0]),
                                                             (pos[1] + 1, pos[0]))
 
             if map[pos[1] - 1][pos[0]] != '0' and self.get_points_distance((target_position[1], target_position[0]), (
-            pos[1] - 1, pos[0])) <= minimum_distance and self.movement_direction != 2 and self.current_cell != pos:
+            pos[1] - 1, pos[0])) <= minimum_distance and self.movement_direction != 2 and self.current_cell != pos: # Возможность поворота вверх
                 direction = 1
                 minimum_distance = self.get_points_distance((target_position[1], target_position[0]),
                                                             (pos[1] - 1, pos[0]))
+
+            #Выбор стороны, в которую можно повернуть
             if direction > 0:
                 self.current_cell = pos
                 if self.movement_direction == 0:
@@ -175,41 +165,39 @@ class Ghost(AnimatedCharacter):
         except IndexError:
             pass
 
-    def ghost_room_exit(self, map):
-        if self.inside_ghost_house:
-            pos = self.get_ghost_cell()
-            if abs((self.ghost_room_exit_point[0] * 16) - self.x) >= self.absolute_speed:
+    def ghost_room_exit(self, map): # Настраивается выход из дома призраков
+        if self.inside_ghost_house and not self.returning_room:
+            if abs((self.ghost_room_exit_point[0] * 16) - self.x) >= self.absolute_speed: # Двигаемся по X, до момента, когда координаты выхода из дома и самого призрака не совпадут
                 direct = ((self.ghost_room_exit_point[0] * 16) - self.x) / abs(
-                    (self.ghost_room_exit_point[0] * 16) - self.x)
-                self.set_x(int(self.x + direct * self.absolute_speed))
+                    (self.ghost_room_exit_point[0] * 16) - self.x) # Определение направления движения
+                self.set_x(int(self.x + direct * self.absolute_speed))  # Изменение координаты X
                 if direct > 0:
-                    self.set_moving_animation(4)
+                    self.set_moving_animation(4) # Задаёт анимацию движения в правую сторону
                 else:
-                    self.set_moving_animation(3)
-            elif self.y > (self.ghost_room_exit_point[1] - 1) * 16 + 10:
+                    self.set_moving_animation(3) # Задаёт анимацию движения в левую сторону
+            elif self.y > (self.ghost_room_exit_point[1] - 1) * 16 + 10: # Двигаемся по Y до момента выхода из комнаты
                 self.set_y(self.y - self.absolute_speed)
                 self.set_x((self.ghost_room_exit_point[0] * 16))
-                self.set_moving_animation(1)
-            else:
+                self.set_moving_animation(1) # Задаёт анимацию движения вверх
+            else: # Если призрак вышел из дома
                 self.inside_ghost_house = False
                 self.movement_direction = 1
                 if self.ghost_status == 2:
                     self.movement_direction = 1
                     self.set_frightened_mode(map)
 
-    def ghost_room_enter(self, map):
-        pos = self.get_ghost_cell()
-        if self.y < self.start_y:
+    def ghost_room_enter(self, map): # Настраивается возвращение на начальную позицию для призрака
+        self.inside_ghost_house = True
+        if self.y < self.start_y:  # Двигаемся по Y до start_y
             self.set_y(self.y + self.absolute_speed)
-            self.set_x((self.ghost_room_exit_point[0] * 16))
             self.set_moving_animation(2)
-        elif abs(self.start_x - self.x) >= self.absolute_speed:
-            direct = (self.start_x - self.x) / abs(self.start_x - self.x)
-            self.set_x(int(self.x + direct * self.absolute_speed))
+        elif abs(self.start_x - self.x) >= self.absolute_speed: # Двигаемся по X до start_x
+            direct = (self.start_x - self.x) / abs(self.start_x - self.x) # Определение направления движения
+            self.set_x(int(self.x + direct * self.absolute_speed))  # Изменение координаты X
             if direct > 0:
-                self.set_moving_animation(4)
+                self.set_moving_animation(4) # Задаёт анимацию движения в правую сторону
             else:
-                self.set_moving_animation(3)
+                self.set_moving_animation(3) # Задаёт анимацию движения в левую сторону
         else:
             self.inside_ghost_house = True
             self.returning_room = False
@@ -218,45 +206,49 @@ class Ghost(AnimatedCharacter):
             self.move(map)
             self.movement_direction == 1
 
-    def set_scatter_mode(self, map):
-        self.set_chase_mode(map, self.scatter_point)
+    def set_scatter_mode(self, map): # Состояние разбегания призраков
+        self.set_chase_mode(map, self.scatter_point)  # Двигаться к назначеной точке
 
-    def set_frightened_mode(self, map, blink = False):
-        self.set_frightened_img(blink)
-        self.set_chase_mode(map, (random.randint(0, 50), random.randint(0, 50)))
+    def set_frightened_mode(self, map, blink = False): # Режим испуга
+        self.set_frightened_img(blink) # Задать изображение страха
+        self.set_chase_mode(map, (random.randint(0, 32), random.randint(0, 32))) # Движение к случайной точке на карте
 
-    def set_frightened_img(self, blink=False):
+    def set_frightened_img(self, blink=False): # Установить изображение, используемое при состоянии страха у призраков
         if self.ghost_status < 2:
             self.set_animation(self.frightened_img, self.get_image_parts(self.frightened_img), True, self.time)
-        if blink:
-            self.set_split_sprites_range(5, 8)
+        if blink: # Задаёт мигание для призраков
+            self.set_split_sprites_range(5, 8) # Задать диапазон спрайтов
         else:
             self.set_split_sprites_range(5, 6)
         self.ghost_status = 2
 
-    def set_scatter_img(self):
+    def set_scatter_img(self): # Установить обычное изображение у призраков (начальное изображение при старте игры)
         if self.ghost_status > 1:
-            self.set_animation(self.img, self.get_image_parts(self.img), True, self.time)
-            self.ghost_status = 0
+            self.set_animation(self.main_img, self.get_image_parts(self.main_img), True, self.time)
+            self.ghost_status = 0 # Состояние преследования
 
-    def get_points_distance(self, p1, p2):
+    def get_points_distance(self, p1, p2):  #  Получение расстояния между двумя точками
         return ((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2) ** 0.5
 
-    def return_to_ghost_room(self, map):
+    def return_to_ghost_room(self, map): # Возвращение призрака себе домой после смерти
         self.absolute_speed = self.returning_speed
-        if self.returning_room:
+        if self.returning_room:  # Проверяет, дошёл ли призрак до дома или нет.
             self.absolute_speed = self.normal_speed
             self.movement_direction = 0
-            self.ghost_room_enter(map)
+            self.ghost_room_enter(map)  # Возвратиться на свой начальную позицию в доме
 
-        else:
-            self.set_chase_mode(map, self.ghost_room_exit_point)
-            if self.ghost_status != 3:
-                self.set_frightened_img()
-            self.ghost_status = 3
-            if self.y == 216 and abs(self.x - 208) < self.absolute_speed:
-                self.returning_room = True
+        else:  # Если призрак не находится рядом с домом
+            self.set_chase_mode(map, self.ghost_room_exit_point)  # Следовать ко входу в дом (ghost_room_exit_point))
+            self.ghost_status = 3  # Установить статус страха у призрака
+            if self.y == 216 and abs(self.x - 206) < self.absolute_speed: # Если у входа в дом
+                self.returning_room = True # Перемещаться внутри дома
 
+    def moving_inside_ghost_room(self):
+        if not self.inside_room_start_moving:
+            self.set_y(self.y + self.frightened_speed * self.inside_room_moving_direction)
+            if self.y < 260 or self.y > 270:
+                self.inside_room_moving_direction *= -1
+            self.set_moving_animation(2-(1-self.inside_room_moving_direction)/2)
 
 
 class Blinky(Ghost):  # Красный
@@ -269,7 +261,7 @@ class Pinky(Ghost):  # Розовый
     def __init__(self, x, y):
         super().__init__(x, y, "pinky", (0, 0))
 
-    def set_pinky_chase_mode(self, map, target_position, target_direction):
+    def set_pinky_chase_mode(self, map, target_position, target_direction): # Алгоритм преследования для Pinky
         if target_direction == 1:
             self.set_chase_mode(map, (target_position[0], target_position[1] - 4))
         elif target_direction == 2:
@@ -286,7 +278,7 @@ class Inky(Ghost):  # Голубой
     def __init__(self, x, y):
         super().__init__(x, y, "inky", (30, 30))
 
-    def set_inky_chase_mode(self, map, target_position, target_direction, blinky_position):
+    def set_inky_chase_mode(self, map, target_position, target_direction, blinky_position): # Алгоритм преследования для Inky
         if target_direction == 1:
             target = (target_position[0], target_position[1] - 2)
         elif target_direction == 2:
@@ -307,7 +299,7 @@ class Clyde(Ghost):  # Оранжевый
     def __init__(self, x, y):
         super().__init__(x, y, "clyde", (0, 30))
 
-    def set_clyde_chase_mode(self, map, target_position):
+    def set_clyde_chase_mode(self, map, target_position): # Алгоритм преследования для Clyde
         if self.get_points_distance(self.get_ghost_cell(), target_position) > 8:
             self.set_chase_mode(map, target_position)
         else:

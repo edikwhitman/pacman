@@ -83,6 +83,7 @@ class Game:
         self.screen.fill(BLACK)
         # Очередь отрисовки:
 
+
         # 1. изображение карты map_img.png
         self.screen.blit(self.map.img, (0, 48))
         # 2. зерна и фрукты
@@ -96,9 +97,15 @@ class Game:
         # 3. pac man
         self.pacman.draw(self.screen)
 
+
+        #pygame.draw.rect(self.screen, (255, 0, 0), self.pacman.rect, 2)
+
         # 4. ghosts
         for ghost in self.ghosts:
+            #pygame.draw.rect(self.screen, (32, 254, 168), ghost.rect, 2)
             ghost.draw(self.screen)
+
+
 
         # 5. scores
         font = pygame.font.Font('font.ttf', 25)
@@ -220,6 +227,7 @@ class Game:
                     self.ghosts.append(Pinky(13 * 16, 14 * 16 + 48 - 8))
                     self.ghosts.append(Inky(11 * 16, 14 * 16 + 48 - 8))
                     self.ghosts.append(Clyde(15 * 16, 14 * 16 + 48 - 8))
+                    self.level.reload()
                     self.__process_drawing()
                     pygame.display.flip()
                     pygame.time.wait(2000)

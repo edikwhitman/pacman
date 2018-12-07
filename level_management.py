@@ -3,18 +3,20 @@ from pacman import Pacman
 from ghosts import Blinky, Pinky, Inky, Clyde
 
 class LevelManagement:
-    def __init__(self):
+    def __init__(self, level = 1):
         self.time = time.time()
         self.start_time = self.time
         self.waves = 1
         self.status = 1 # 0 - преследование, 1 - разбегание, 2 - страх
-        self.level = 1
+        self.level = level
         self.scatter_time = 7 # время разбегания
         self.chase_time = 20 # время преследования
         self.frightened_time = 8 # время испуга
         self.ghosts_blinking_time = 3
         self.ghosts_blinking = False
 
+    def reload(self):
+        self.__init__(self.level)
 
     def manage(self, map, pacman, ghosts, scores):
         if self.status == 0 and int(time.time() - self.time) >= self.chase_time:  # Разбегание
@@ -50,6 +52,8 @@ class LevelManagement:
     def move(self, map, pacman, ghosts, scores):
 
         for ghost in ghosts:
+            if ghost.inside_ghost_house:
+                ghost.moving_inside_ghost_room()
             if self.status != 1:
                 if ghost.ghost_status != 3:
                     if ghost.name == "blinky":
