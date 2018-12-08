@@ -3,6 +3,8 @@ import pygame
 
 class Character:  # Статичный персонаж
     def __init__(self, x, y, img_src='', width='16', height='16'):  # x, y - координаты, img_src - спрайт
+        self.visible = True
+        self.pause = False
         self.x = x
         self.y = y
         self.object = pygame.image.load(img_src)
@@ -117,9 +119,10 @@ class AnimatedCharacter(Character):  # Анимированный персона
         return width // height
 
     def draw(self, screen, upd_time=1):  # Вывод на экран
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
-        if not self.end:
-            self.object = self.get_sprite()
-            self.update(upd_time)
-            self.set_rotation(self.angle)
-            screen.blit(pygame.transform.scale(self.object, (self.width, self.height)), self.object_rect)
+        if self.visible:
+            self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+            if not self.end:
+                self.object = self.get_sprite()
+                self.update(upd_time)
+                self.set_rotation(self.angle)
+                screen.blit(pygame.transform.scale(self.object, (self.width, self.height)), self.object_rect)

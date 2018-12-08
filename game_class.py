@@ -98,13 +98,11 @@ class Game:
         self.pacman.draw(self.screen)
 
 
-        #pygame.draw.rect(self.screen, (255, 0, 0), self.pacman.rect, 2)
-
         # 4. ghosts
         for ghost in self.ghosts:
-            #pygame.draw.rect(self.screen, (32, 254, 168), ghost.rect, 2)
+            if ghost.visible == False:
+                self.level.pause_draw(self.pacman, ghost, self.screen, self.score)
             ghost.draw(self.screen)
-
 
 
         # 5. scores
@@ -197,8 +195,8 @@ class Game:
         for ghost in self.ghosts:
             if ghost.ghost_status < 2 and ghost.rect.colliderect(self.pacman.rect):
                 self.pacman.rect = None
-                for ghost in self.ghosts:
-                    ghost.rect = None
+                #for ghost in self.ghosts:
+                #    ghost.rect = None
                 self.lives -= 1
                 self.pacman.set_death_animation()
                 self.pacman.movement_direction = 0
@@ -232,7 +230,9 @@ class Game:
                     pygame.display.flip()
                     pygame.time.wait(2000)
             elif ghost.rect.colliderect(self.pacman.rect):
-                ghost.return_to_ghost_room(self.map.data)
+                if ghost.ghost_status != 3:
+                    ghost.visible = False
+                    self.score = self.level.ghost_destroy(self.map.data, self.ghosts, self.pacman, self.score)
 
     def check_eaten_grains(self):
         for i in range(31):
