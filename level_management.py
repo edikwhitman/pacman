@@ -1,3 +1,4 @@
+import random
 import time
 import pygame
 
@@ -93,6 +94,30 @@ class LevelManagement:
             if ghost.pause:
                 self.time = time.time() - self.pause_range
 
+    def get_fruit(self):
+        if self.level == 1:
+            return 'cherry'
+        elif self.level == 2:
+            return 'strawberry'
+        elif self.level == 3:
+            return 'apple'
+        elif self.level == 4:
+            return 'banana'
+        elif self.level == 5:
+            return 'orange'
+        else:
+            x = random.randint(1, 5)
+            if x == 1:
+                return 'cherry'
+            elif x == 2:
+                return 'strawberry'
+            elif x == 3:
+                return 'apple'
+            elif x == 4:
+                return 'banana'
+            elif x == 5:
+                return 'orange'
+
     def ghost_destroy(self, map, ghosts, pacman, score): # пауза при уничтожении призрака
         if time.time() - self.pause_time >= 1 and self.pause_time >= 0:
             for ghost in ghosts:
@@ -139,5 +164,4 @@ class LevelManagement:
         self.status = 2
         self.time = time.time()
         self.ghost_scores = -1
-
 

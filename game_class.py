@@ -17,6 +17,9 @@ class Game:
         self.ghosts = list()
         self.grain_img = None
         self.big_grain_img = None
+        self.fruits = dict()
+        self.fruit_timer = 0
+        self.eaten_fruits = list()
         self.big_grain_draw = True  # Отображаем большое зерно или нет. Чтобы мигание делать
         self.sum_of_eaten_grains = 0  # Счетчик съеденных зерен, нужен для последующего отображения вишен
         self.counter = 1  # Счетчик прохода по game_loop, нужен как таймер
@@ -70,13 +73,30 @@ class Game:
         if self.counter % 20 == 0:
             self.up_draw = not self.up_draw
         self.counter += 1
-        if self.counter == 100:
+        if self.counter == 1000:
             self.counter = 0
         if self.lives == 0:
             self.game_loop_run = False
 
         if self.sum_of_eaten_grains == self.map.count_of_grains:
             self.change_level()
+
+        if self.sum_of_eaten_grains == 70 or self.sum_of_eaten_grains == 170:
+            self.map.data[self.fruit_spawn[1]][self.fruit_spawn[0]] = '6'
+            self.map.data[self.fruit_spawn[1]][self.fruit_spawn[0] - 1] = '6'
+            self.fruit_timer = self.counter
+        if self.map.data[self.fruit_spawn[1]][self.fruit_spawn[0]] == '6':
+            if self.counter - self.fruit_timer == 400 or 1000 - self.fruit_timer + self.counter == 400:  # Второе на
+                self.map.data[self.fruit_spawn[1]][self.fruit_spawn[0]] = '5'  # случай, если сбросится counter
+                self.map.data[self.fruit_spawn[1]][self.fruit_spawn[0] - 1] = '5'
+        x, y = self.get_pacman_cell()
+        if self.map.data[self.fruit_spawn[1]][self.fruit_spawn[0]] == '6' \
+                and (x == self.fruit_spawn[0] or x == self.fruit_spawn[0] - 1) and y == self.fruit_spawn[1]:
+            self.map.data[self.fruit_spawn[1]][self.fruit_spawn[0]] = '5'
+            self.map.data[self.fruit_spawn[1]][self.fruit_spawn[0] - 1] = '5'
+            self.score += 100
+            if len(self.eaten_fruits) < 8:
+                self.eaten_fruits.append(self.level.get_fruit())
 
     # Отрисовка не статичных объектов
     def __process_drawing(self):
@@ -93,16 +113,21 @@ class Game:
                 elif self.map.data[i][j] == '3' and self.big_grain_draw:
                     self.screen.blit(self.big_grain_img, (j * 16, (i * 16) + 48))
 
-        # 3. pac man
+        # 3. fruits
+        if self.map.data[self.fruit_spawn[1]][self.fruit_spawn[0]] == '6':
+            self.screen.blit(self.fruits[self.level.get_fruit()],
+                             (self.fruit_spawn[0] * 16 - 16, self.fruit_spawn[1] * 16 + 40))
+
+        # 4. pac man
         self.pacman.draw(self.screen)
 
-        # 4. ghosts
+        # 5. ghosts
         for ghost in self.ghosts:
             if not ghost.visible:
                 self.level.pause_draw(self.pacman, ghost, self.screen, self.score)
             ghost.draw(self.screen)
 
-        # 5. scores
+        # 6. scores
         font = pygame.font.Font('font.ttf', 25)
         if self.up_draw:
             up = font.render('1UP', True, WHITE)  # Надпись над текущим счетом
@@ -129,6 +154,11 @@ class Game:
         live_pacman = pygame.transform.rotate(live_pacman, 90)
         for i in range(self.lives):
             self.screen.blit(live_pacman, (16 * 2 * (i + 1) + 5 * i, 34 * 16))
+
+        i = 0
+        for fruit in self.eaten_fruits:
+            self.screen.blit(self.fruits[fruit], (32*(12-i), 34 * 16))
+            i += 1
 
     # Обработка ивентов
     def __check_event(self):
@@ -165,8 +195,8 @@ class Game:
                 char = self.map.data[i][j]
                 if char == '9' and previous_char == '9':
                     self.pacman_start_spawn = (j * 16 - 16, i * 16 + 40)
-                elif char == '6' and previous_char == '6':
-                    self.fruit_spawn = (j * 16 - 8, i * 16 + 48)
+                elif char == '5' and previous_char == '5':
+                    self.fruit_spawn = (j, i)  # Только координаты клетки
                 elif char == '1' or char == '3':
                     self.map.count_of_grains += 1
                 previous_char = self.map.data[i][j]
@@ -207,6 +237,9 @@ class Game:
         for ghost in self.ghosts:
             if ghost.ghost_status < 2 and ghost.rect.colliderect(self.pacman.rect):
                 self.pacman.rect = None
+                self.map.data[self.fruit_spawn[1]][self.fruit_spawn[0]] = '5'  # Cброс фрукта
+                self.map.data[self.fruit_spawn[1]][self.fruit_spawn[0] - 1] = '5'
+
                 self.lives -= 1
                 self.pacman.set_death_animation()
                 self.pacman.movement_direction = 0
@@ -225,7 +258,7 @@ class Game:
                                          start_img_path='texturepacks/{}/pacman/pacman_stand.png'.format(
                                              self.texturepack.name))
                     self.pacman.texture_stand = 'texturepacks/{}/pacman/pacman_stand.png'.format(
-                                             self.texturepack.name)
+                        self.texturepack.name)
                     self.pacman.texture_eat = 'texturepacks/{}/pacman/pacman_eat.png'.format(
                         self.texturepack.name)
                     self.pacman.texture_death = 'texturepacks/{}/pacman/pacman_death.png'.format(
@@ -281,6 +314,13 @@ class Game:
         self.pacman.texture_stand = 'texturepacks/{}/pacman/pacman_stand.png'.format(self.texturepack.name)
         self.pacman.texture_death = 'texturepacks/{}/pacman/pacman_death.png'.format(self.texturepack.name)
         self.pacman.texture_eat = 'texturepacks/{}/pacman/pacman_eat.png'.format(self.texturepack.name)
+        # fruits
+        self.fruits['cherry'] = pygame.image.load('texturepacks/{}/fruits/cherry.png'.format(self.texturepack.name))
+        self.fruits['strawberry'] = pygame.image.load('texturepacks/{}/fruits/strawberry.png'.
+                                                      format(self.texturepack.name))
+        self.fruits['banana'] = pygame.image.load('texturepacks/{}/fruits/banana.png'.format(self.texturepack.name))
+        self.fruits['apple'] = pygame.image.load('texturepacks/{}/fruits/apple.png'.format(self.texturepack.name))
+        self.fruits['orange'] = pygame.image.load('texturepacks/{}/fruits/orange.png'.format(self.texturepack.name))
 
     def change_level(self):
         for i in range(8):
@@ -326,6 +366,8 @@ class Game:
             pygame.time.wait(500)
 
         self.__reset_grains()
+        self.map.data[self.fruit_spawn[1]][self.fruit_spawn[0]] = '5'  # Сброс фруктов
+        self.map.data[self.fruit_spawn[1]][self.fruit_spawn[0] - 1] = '5'
         self.pacman.movement_direction = 0
         self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
         self.ghosts = list()
