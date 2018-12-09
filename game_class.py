@@ -83,7 +83,6 @@ class Game:
         self.screen.fill(BLACK)
         # Очередь отрисовки:
 
-
         # 1. изображение карты map_img.png
         self.screen.blit(self.map.img, (0, 48))
         # 2. зерна и фрукты
@@ -97,13 +96,11 @@ class Game:
         # 3. pac man
         self.pacman.draw(self.screen)
 
-
         # 4. ghosts
         for ghost in self.ghosts:
-            if ghost.visible == False:
+            if not ghost.visible:
                 self.level.pause_draw(self.pacman, ghost, self.screen, self.score)
             ghost.draw(self.screen)
-
 
         # 5. scores
         font = pygame.font.Font('font.ttf', 25)
@@ -195,8 +192,6 @@ class Game:
         for ghost in self.ghosts:
             if ghost.ghost_status < 2 and ghost.rect.colliderect(self.pacman.rect):
                 self.pacman.rect = None
-                #for ghost in self.ghosts:
-                #    ghost.rect = None
                 self.lives -= 1
                 self.pacman.set_death_animation()
                 self.pacman.movement_direction = 0
