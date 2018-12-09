@@ -247,6 +247,8 @@ class Game:
             elif ghost.rect.colliderect(self.pacman.rect):
                 if ghost.ghost_status != 3:
                     ghost.visible = False
+                    self.sounds['eating_ghost'].set_volume(0.5)
+                    self.sounds['eating_ghost'].play()
                     self.score = self.level.ghost_destroy(self.map.data, self.ghosts, self.pacman, self.score)
 
     def check_eaten_grains(self):
