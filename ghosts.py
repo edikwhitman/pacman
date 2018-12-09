@@ -221,7 +221,6 @@ class Ghost(AnimatedCharacter):
                 self.returning_room = False
                 self.set_scatter_img()
                 self.ghost_status = 1
-                self.movement_direction == 1
                 self.ghost_status = 0
                 self.move(map)
 
@@ -264,8 +263,6 @@ class Ghost(AnimatedCharacter):
                 self.returning_room = True  # Перемещаться внутри дома
 
     def moving_inside_ghost_room(self):
-        if self.name == "blinky":
-            print("in this method")
         if not self.pause:
             if not self.inside_room_start_moving:
                 self.set_y(self.y + self.frightened_speed * self.inside_room_moving_direction)
