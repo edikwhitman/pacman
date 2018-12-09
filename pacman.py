@@ -23,19 +23,15 @@ class Pacman(AnimatedCharacter):
         if self.movement_direction_queue == 3 and map[(self.y + 16 - 48) // 16][(self.x - 2) // 16] != "0":
             self.movement_direction = 3
             self.movement_direction_queue = 0
-            self.set_x(self.x - 3)
         elif self.movement_direction_queue == 4 and map[(self.y + 16 - 48) // 16][(self.x + 34) // 16] != "0":
             self.movement_direction = 4
             self.movement_direction_queue = 0
-            self.set_x(self.x + 3)
         elif self.movement_direction_queue == 1 and map[(self.y - 44) // 16][(self.x + 16) // 16] != "0":
             self.movement_direction = 1
             self.movement_direction_queue = 0
-            self.set_y(self.y + 3)
         elif self.movement_direction_queue == 2 and map[(self.y - 10) // 16][(self.x + 16) // 16] != "0":
             self.movement_direction = 2
             self.movement_direction_queue = 0
-            self.set_y(self.y - 3)
 
     def check_collision(self, map):  # Проверка на столкновение со стенами
         if self.movement_direction == 3 and map[(self.y + 16 - 48) // 16][(self.x + 6) // 16] != "0":
@@ -84,15 +80,16 @@ class Pacman(AnimatedCharacter):
             self.set_position(self.x + self.horisontal_speed, self.y + self.vertical_speed)
 
     def move(self, map):  # Движение
-        try:
-            self.change_direction(map)
-        except IndexError:
-            pass
-        try:
-            self.check_collision(map)
-        except IndexError:
-            pass
-        self.position_logic()
+        if not self.pause:
+            try:
+                self.change_direction(map)
+            except IndexError:
+                pass
+            try:
+                self.check_collision(map)
+            except IndexError:
+                pass
+            self.position_logic()
 
     def set_eat_animation(self):
         if self.animation_status == 2 or self.animation_status == 1:
@@ -117,4 +114,7 @@ class Pacman(AnimatedCharacter):
 
     def draw(self, screen, upd_time=1):
         super().draw(screen, upd_time)
-        self.rect = pygame.Rect(self.x + self.width/4, self.y + self.height/4, self.width/2, self.height/2)
+        if self.pause:
+            self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        else:
+            self.rect = pygame.Rect(self.x + self.width/4, self.y + self.height/4, self.width/2, self.height/2)

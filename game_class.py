@@ -98,6 +98,8 @@ class Game:
 
         # 4. ghosts
         for ghost in self.ghosts:
+            if not ghost.visible:
+                self.level.pause_draw(self.pacman, ghost, self.screen, self.score)
             ghost.draw(self.screen)
 
         # 5. scores
@@ -179,6 +181,7 @@ class Game:
         self.__set_textures()
         # Установка стартовой позиции пакмана
         self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
+        self.level = LevelManagement()
 
         # установка остальных необходимых значений
 
@@ -202,7 +205,8 @@ class Game:
 
     def check_pacman_ghost_collision(self):
         for ghost in self.ghosts:
-            if ghost.ghost_status != 2 and ghost.rect.colliderect(self.pacman.rect):
+            if ghost.ghost_status < 2 and ghost.rect.colliderect(self.pacman.rect):
+                self.pacman.rect = None
                 self.lives -= 1
                 self.pacman.set_death_animation()
                 self.pacman.movement_direction = 0
@@ -229,13 +233,21 @@ class Game:
                     self.pacman.set_position(self.pacman_start_spawn[0], self.pacman_start_spawn[1])
                     self.pacman.move(self.map.data)
                     self.ghosts = list()
+
                     self.ghosts.append(Blinky(13 * 16, 11 * 16 + 48 - 8, self.texturepack.name))
                     self.ghosts.append(Pinky(13 * 16, 14 * 16 + 48 - 8, self.texturepack.name))
                     self.ghosts.append(Inky(11 * 16, 14 * 16 + 48 - 8, self.texturepack.name))
                     self.ghosts.append(Clyde(15 * 16, 14 * 16 + 48 - 8, self.texturepack.name))
+
+                    self.level.reload()
+
                     self.__process_drawing()
                     pygame.display.flip()
                     pygame.time.wait(2000)
+            elif ghost.rect.colliderect(self.pacman.rect):
+                if ghost.ghost_status != 3:
+                    ghost.visible = False
+                    self.score = self.level.ghost_destroy(self.map.data, self.ghosts, self.pacman, self.score)
 
     def check_eaten_grains(self):
         for i in range(31):
@@ -257,6 +269,7 @@ class Game:
                         self.map.data[i][j] = '4'
                         self.score += 50
                         self.sum_of_eaten_grains += 1
+                        self.level.frightened(self.map.data, self.pacman, self.ghosts, self.score)
 
     def __set_textures(self):
         # grains
