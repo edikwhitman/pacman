@@ -85,6 +85,7 @@ class Game:
             self.map.data[self.fruit_spawn[1]][self.fruit_spawn[0]] = '6'
             self.map.data[self.fruit_spawn[1]][self.fruit_spawn[0] - 1] = '6'
             self.fruit_timer = self.counter
+            self.sounds['fruit'].play()
         if self.map.data[self.fruit_spawn[1]][self.fruit_spawn[0]] == '6':
             if self.counter - self.fruit_timer == 400 or 1000 - self.fruit_timer + self.counter == 400:  # Второе на
                 self.map.data[self.fruit_spawn[1]][self.fruit_spawn[0]] = '5'  # случай, если сбросится counter
